@@ -1,8 +1,10 @@
+
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
   {
     path: '',
+<<<<<<< Updated upstream
     title: 'Lumina Dental Studio — calm, considered dentistry in Portland',
     loadComponent: () => import('./pages/home/home').then((module) => module.HomePage),
   },
@@ -18,4 +20,10 @@ export const routes: Routes = [
       import('./pages/reception/reception').then((module) => module.ReceptionPage),
   },
   { path: '**', redirectTo: '' },
+=======
+    loadComponent: () =>
+      import('./features/welcome/welcome')
+        .then(m => m.Welcome)
+  }
+>>>>>>> Stashed changes
 ];

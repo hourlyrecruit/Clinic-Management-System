@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { App } from './app';
@@ -23,3 +24,16 @@ describe('App', () => {
     expect(compiled.querySelector('.skip-link')?.getAttribute('href')).toBe('#main-content');
   });
 });
+=======
+
+import { Routes } from '@angular/router';
+
+export const routes: Routes = [
+  {
+    path: '',
+    loadComponent: () =>
+      import('./features/welcome/welcome')
+        .then(m => m.Welcome)
+  }
+];
+>>>>>>> Stashed changes
