@@ -1,0 +1,77 @@
+<section id="treatments" class="section section--tint" aria-labelledby="treatments-title">
+  <div class="container">
+    <div class="section-head">
+      <div class="section-head__copy" appReveal>
+        <span class="eyebrow">Treatments</span>
+        <h2 id="treatments-title" class="section-title">
+          Everything your smile needs — <em>nothing it doesn’t.</em>
+        </h2>
+      </div>
+      <div class="services__aside" appReveal [revealDelay]="90">
+        <p>
+          From a first check-up to a full rebuild, every plan starts with a conversation and a
+          written estimate.
+        </p>
+        <button type="button" class="text-link" (click)="support.open('Treatment options')">
+          Not sure what you need? Ask us
+          <app-icon name="arrow-right" [size]="15" />
+        </button>
+      </div>
+    </div>
+
+    <div class="services__grid">
+      @for (service of services; track service.id; let index = $index) {
+        <article
+          class="service-card"
+          [class.service-card--featured]="service.featured"
+          appReveal
+          [revealDelay]="index * 70"
+        >
+          <div class="service-card__top">
+            <span class="service-card__icon">
+              <app-icon [name]="service.icon" [size]="22" />
+            </span>
+            @if (service.featured) {
+              <span class="service-card__flag">Most requested</span>
+            }
+          </div>
+
+          <h3>{{ service.name }}</h3>
+          <p>{{ service.summary }}</p>
+
+          <ul class="service-card__points">
+            @for (point of service.highlights; track point) {
+              <li>
+                <app-icon name="check" [size]="13" />
+                {{ point }}
+              </li>
+            }
+          </ul>
+
+          <div class="service-card__foot">
+            <span class="service-card__meta">
+              <app-icon name="clock" [size]="14" />
+              {{ service.duration }} · from {{ service.fromPrice }}
+            </span>
+            <a
+              class="service-card__cta"
+              routerLink="/book"
+              [queryParams]="{ service: service.id }"
+              [attr.aria-label]="'Book ' + service.name"
+            >
+              <app-icon name="arrow-up-right" [size]="16" />
+            </a>
+          </div>
+        </article>
+      }
+    </div>
+
+    <div class="services__note" appReveal>
+      <app-icon name="shield" [size]="18" />
+      <p>
+        Transparent pricing, written estimates before treatment and 0% finance on plans over $800.
+        No hidden extras, ever.
+      </p>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,122 @@
+<dialog
+  #dialog
+  class="consult-dialog"
+  aria-labelledby="consultation-title"
+  (cancel)="onCancel($event)"
+  (click)="onBackdrop($event)"
+>
+  <div class="dialog-card">
+    @if (!submitted()) {
+      <header class="dialog-head">
+        <div>
+          <span class="eyebrow">Free 15-minute consultation</span>
+          <h2 id="consultation-title" class="display">Let's talk it through.</h2>
+          <p>
+            No charge and no obligation — just an honest conversation about options, timing or cost
+            with one of our clinicians.
+          </p>
+        </div>
+        <button
+          type="button"
+          class="dialog-close"
+          aria-label="Close consultation form"
+          (click)="close()"
+        >
+          <app-icon name="close" [size]="18" />
+        </button>
+      </header>
+
+      <form class="dialog-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+        <div class="field">
+          <label for="consult-name">Your name</label>
+          <input
+            id="consult-name"
+            class="input"
+            type="text"
+            formControlName="name"
+            autocomplete="name"
+            autofocus
+            placeholder="Jamie Rivera"
+            [attr.aria-invalid]="form.controls.name.touched && form.controls.name.invalid"
+          />
+          @if (form.controls.name.touched && form.controls.name.invalid) {
+            <p class="error-text">Please tell us your name.</p>
+          }
+        </div>
+
+        <div class="form-grid">
+          <div class="field">
+            <label for="consult-email">Email</label>
+            <input
+              id="consult-email"
+              class="input"
+              type="email"
+              formControlName="email"
+              autocomplete="email"
+              placeholder="you@example.com"
+              [attr.aria-invalid]="form.controls.email.touched && form.controls.email.invalid"
+            />
+            @if (form.controls.email.touched && form.controls.email.invalid) {
+              <p class="error-text">Enter a valid email so we can reply.</p>
+            }
+          </div>
+          <div class="field">
+            <label for="consult-phone">Phone <span class="hint-text">(optional)</span></label>
+            <input
+              id="consult-phone"
+              class="input"
+              type="tel"
+              formControlName="phone"
+              autocomplete="tel"
+              placeholder="(503) 555-0100"
+            />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="consult-topic">What would you like to talk about?</label>
+          <select id="consult-topic" class="select" formControlName="topic">
+            @for (topic of topics; track topic) {
+              <option [value]="topic">{{ topic }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="consult-message"
+            >Anything we should know? <span class="hint-text">(optional)</span></label
+          >
+          <textarea
+            id="consult-message"
+            class="textarea"
+            formControlName="message"
+            placeholder="A question about treatment, nerves, costs — or a time that suits you."
+          ></textarea>
+        </div>
+
+        <button type="submit" class="btn btn--primary btn--block">
+          Request my consultation
+          <app-icon name="arrow-right" [size]="17" />
+        </button>
+        <p class="dialog-note">
+          A patient coordinator replies within one working day. We never share your details.
+        </p>
+      </form>
+    } @else {
+      <div class="dialog-success">
+        <span class="success-mark"><app-icon name="check" [size]="30" /></span>
+        <span class="eyebrow eyebrow--plain">Request received</span>
+        <h2 id="consultation-title" class="display">We'll be in touch.</h2>
+        <p>
+          Thanks, {{ form.controls.name.value }}. Your consultation request is with our patient
+          coordinator — expect a reply within one working day.
+        </p>
+        <p class="dialog-note">
+          Need to talk sooner? Call
+          <a href="tel:+15035550142">(503) 555-0142</a> and we'll help straight away.
+        </p>
+        <button type="button" class="btn btn--primary" (click)="finish()">Back to the site</button>
+      </div>
+    }
+  </div>
+</dialog>

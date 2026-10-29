@@ -1,0 +1,114 @@
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero__backdrop" aria-hidden="true">
+    <span class="hero__grid"></span>
+    <span class="orb hero__orb"></span>
+    <span class="hero__ring"></span>
+  </div>
+
+  <div class="container hero__inner">
+    <div class="hero__copy">
+      <span class="hero__badge" appReveal>
+        <span class="hero__badge-dot"></span>
+        Portland · New patients welcome
+      </span>
+
+      <h1 id="hero-title" class="display" appReveal [revealDelay]="60">
+        A calmer kind of <em>dental care.</em>
+      </h1>
+
+      <p class="lead" appReveal [revealDelay]="120">
+        Thoughtful, unhurried dentistry — from routine check-ups to complete smile makeovers —
+        delivered by people who treat you like a person, not an appointment.
+      </p>
+
+      <div class="hero__actions" appReveal [revealDelay]="180">
+        <a class="btn btn--primary" routerLink="/book">
+          Book an appointment
+          <app-icon name="arrow-right" [size]="17" />
+        </a>
+        <button class="btn btn--outline" type="button" (click)="requestConsultation.emit()">
+          Free 15-min consultation
+        </button>
+      </div>
+
+      <div class="hero__proof" appReveal [revealDelay]="240">
+        <div class="hero__avatars" aria-hidden="true">
+          @for (dentist of dentists; track dentist.id) {
+            <img [src]="dentist.image" alt="" width="44" height="44" loading="lazy" />
+          }
+        </div>
+        <div class="hero__proof-copy">
+          <span class="hero__stars">
+            <span class="stars" aria-hidden="true">
+              @for (star of [1, 2, 3, 4, 5]; track star) {
+                <app-icon name="star" [size]="13" />
+              }
+            </span>
+            <strong>{{ clinic.rating }}</strong>
+            <span>· {{ clinic.reviewCount }} reviews</span>
+          </span>
+          <span>{{ clinic.patientCount }} patients cared for since {{ clinic.established }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero__media" appReveal [revealDelay]="160">
+      <figure class="hero__photo">
+        <img
+          src="images/hero-treatment.jpg"
+          alt="A Lumina dentist talking a patient through their digital X-ray in the treatment room"
+          width="1200"
+          height="1400"
+          fetchpriority="high"
+        />
+        <figcaption class="hero__photo-caption">
+          <app-icon name="shield" [size]="16" />
+          Low-dose digital imaging, explained as we go
+        </figcaption>
+      </figure>
+
+      <div class="float-card float-card--opening">
+        <span class="float-card__icon"><app-icon name="calendar" [size]="18" /></span>
+        <div>
+          <span class="float-card__label">Next opening</span>
+          <strong>{{ nextOpening().day }} · {{ nextOpening().time }}</strong>
+        </div>
+        <span class="float-card__live" aria-hidden="true"></span>
+      </div>
+
+      <div class="float-card float-card--dentist">
+        <img [src]="dentists[0].image" alt="" width="40" height="40" loading="lazy" />
+        <div>
+          <strong>{{ dentists[0].name }}</strong>
+          <span>Clinical Director</span>
+        </div>
+        <span class="float-card__badge">Accepting</span>
+      </div>
+
+      <div class="hero__seal" aria-label="Rated 4.9 out of 5 by patients">
+        <span class="hero__seal-stars">
+          @for (star of [1, 2, 3, 4, 5]; track star) {
+            <app-icon name="star" [size]="11" />
+          }
+        </span>
+        <strong>{{ clinic.rating }}</strong>
+        <span>{{ clinic.reviewCount }} patient reviews</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="container hero__assurance" appReveal>
+    <span class="hero__assurance-label">In-network with</span>
+    <span class="hero__assurance-logos">
+      <span>Delta Dental</span>
+      <span>Cigna</span>
+      <span>Aetna</span>
+      <span>MetLife</span>
+    </span>
+    <span class="hero__assurance-divider" aria-hidden="true"></span>
+    <span class="hero__assurance-note">
+      <app-icon name="check" [size]="14" />
+      ADA member practice · 0% finance available
+    </span>
+  </div>
+</section>
