@@ -1,0 +1,94 @@
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a class="brand" routerLink="/" aria-label="Lumina Dental Studio — home">
+          <span class="brand__mark">
+            <app-icon name="tooth" [size]="22" />
+          </span>
+          <span class="brand__text">
+            <strong>Lumina</strong>
+            <small>Dental Studio</small>
+          </span>
+        </a>
+        <p>
+          Calm, considered dentistry in Portland since {{ clinic.established }}. A small team,
+          longer appointments and no pressure — ever.
+        </p>
+        <div class="footer-rating">
+          <span class="stars" aria-hidden="true">
+            @for (star of [1, 2, 3, 4, 5]; track star) {
+              <app-icon name="star" [size]="14" />
+            }
+          </span>
+          <span>{{ clinic.rating }} · {{ clinic.reviewCount }} patient reviews</span>
+        </div>
+      </div>
+
+      <div class="footer-column">
+        <h2 class="footer-heading">Explore</h2>
+        <ul class="footer-links">
+          @for (item of explore; track item.fragment) {
+            <li>
+              <a [routerLink]="['/']" [fragment]="item.fragment">{{ item.label }}</a>
+            </li>
+          }
+          <li><a routerLink="/book">Book an appointment</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <h2 class="footer-heading">Treatments</h2>
+        <ul class="footer-links">
+          @for (service of services; track service.id) {
+            <li>
+              <a routerLink="/book" [queryParams]="{ service: service.id }">{{ service.name }}</a>
+            </li>
+          }
+        </ul>
+      </div>
+
+      <div class="footer-column footer-visit">
+        <h2 class="footer-heading">Visit</h2>
+        <address>
+          <a class="footer-contact" [href]="clinic.mapsUrl" target="_blank" rel="noopener">
+            <app-icon name="pin" [size]="17" />
+            <span>{{ clinic.addressLine1 }}<br />{{ clinic.addressLine2 }}</span>
+          </a>
+          <a class="footer-contact" [href]="clinic.phoneHref">
+            <app-icon name="phone" [size]="16" />
+            <span>{{ clinic.phoneDisplay }}</span>
+          </a>
+          <a class="footer-contact" [href]="'mailto:' + clinic.email">
+            <app-icon name="mail" [size]="16" />
+            <span>{{ clinic.email }}</span>
+          </a>
+        </address>
+        <ul class="footer-hours">
+          @for (row of hours; track row.day) {
+            <li>
+              <span>{{ row.day }}</span>
+              <span>{{ row.time }}</span>
+            </li>
+          }
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-emergency">
+      <span class="footer-emergency__icon"><app-icon name="alert" [size]="18" /></span>
+      <p>
+        <strong>In pain right now?</strong> We hold same-day slots for emergencies. Call
+        <a [href]="clinic.emergencyPhoneHref">{{ clinic.emergencyPhoneDisplay }}</a> before 4:00 PM.
+      </p>
+    </div>
+
+    <div class="footer-bottom">
+      <p>© {{ year }} {{ clinic.name }}. All rights reserved.</p>
+      <div class="footer-legal">
+        <span>OR Board of Dentistry · Lic. #D-14872</span>
+        <a routerLink="/reception">Staff portal</a>
+      </div>
+    </div>
+  </div>
+</footer>

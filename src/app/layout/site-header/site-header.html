@@ -1,0 +1,62 @@
+<header class="site-header" [class.is-scrolled]="scrolled()">
+  <div class="container header-inner">
+    <a class="brand" routerLink="/" aria-label="Lumina Dental Studio — home" (click)="closeMenu()">
+      <span class="brand__mark">
+        <app-icon name="tooth" [size]="21" />
+      </span>
+      <span class="brand__text">
+        <strong>Lumina</strong>
+        <small>Dental Studio</small>
+      </span>
+    </a>
+
+    <nav class="desktop-nav" aria-label="Primary navigation">
+      @for (item of navItems; track item.fragment) {
+        <a [routerLink]="['/']" [fragment]="item.fragment">{{ item.label }}</a>
+      }
+    </nav>
+
+    <div class="header-actions">
+      <a class="header-phone" [href]="clinic.phoneHref">
+        <app-icon name="phone" [size]="15" />
+        <span>{{ clinic.phoneDisplay }}</span>
+      </a>
+      <a class="btn btn--primary btn--sm header-book" routerLink="/book">
+        Book a visit
+        <app-icon name="arrow-up-right" [size]="14" />
+      </a>
+      <button
+        type="button"
+        class="menu-toggle"
+        [attr.aria-expanded]="menuOpen()"
+        aria-controls="mobile-menu"
+        [attr.aria-label]="menuOpen() ? 'Close menu' : 'Open menu'"
+        (click)="toggleMenu()"
+      >
+        <app-icon [name]="menuOpen() ? 'close' : 'menu'" [size]="22" />
+      </button>
+    </div>
+  </div>
+
+  @if (menuOpen()) {
+    <div class="mobile-menu" id="mobile-menu">
+      <nav aria-label="Mobile navigation">
+        @for (item of navItems; track item.fragment) {
+          <a [routerLink]="['/']" [fragment]="item.fragment" (click)="closeMenu()">
+            {{ item.label }}
+            <app-icon name="arrow-right" [size]="16" />
+          </a>
+        }
+      </nav>
+      <div class="mobile-menu__actions">
+        <a class="btn btn--primary btn--block" routerLink="/book" (click)="closeMenu()">
+          Book an appointment
+        </a>
+        <a class="btn btn--outline btn--block" [href]="clinic.phoneHref">
+          <app-icon name="phone" [size]="16" />
+          {{ clinic.phoneDisplay }}
+        </a>
+      </div>
+    </div>
+  }
+</header>

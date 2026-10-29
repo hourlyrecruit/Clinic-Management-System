@@ -1,0 +1,59 @@
+<section id="dentists" class="section team" aria-labelledby="team-title">
+  <div class="container">
+    <div class="section-head">
+      <div class="section-head__copy" appReveal>
+        <span class="eyebrow">The clinicians</span>
+        <h2 id="team-title" class="section-title">Clinicians who <em>actually listen.</em></h2>
+      </div>
+      <p class="team__aside" appReveal [revealDelay]="90">
+        Three dentists, one shared approach: explain everything, rush nothing, and only recommend
+        what we would choose for our own families.
+      </p>
+    </div>
+
+    <div class="team__grid">
+      @for (dentist of dentists; track dentist.id; let index = $index) {
+        <article class="team-card" appReveal [revealDelay]="index * 90">
+          <div class="team-card__media">
+            <img
+              [src]="dentist.image"
+              [alt]="'Portrait of ' + dentist.name"
+              width="760"
+              height="900"
+              loading="lazy"
+            />
+            <span class="team-card__badge">Accepting patients</span>
+          </div>
+
+          <div class="team-card__body">
+            <h3>{{ dentist.name }}</h3>
+            <p class="team-card__role">{{ dentist.role }}</p>
+            <p class="team-card__bio">{{ dentist.bio }}</p>
+
+            <ul class="team-card__focus" aria-label="Focus areas">
+              @for (focus of dentist.focus; track focus) {
+                <li>{{ focus }}</li>
+              }
+            </ul>
+
+            <div class="team-card__foot">
+              <span class="team-card__years">
+                <app-icon name="star" [size]="13" />
+                {{ dentist.years }} yrs
+              </span>
+              <a class="text-link" routerLink="/book" [queryParams]="{ dentist: dentist.id }">
+                Book with {{ dentist.name.split(' ')[1] }}
+                <app-icon name="arrow-right" [size]="15" />
+              </a>
+            </div>
+          </div>
+        </article>
+      }
+    </div>
+
+    <p class="team__note" appReveal>
+      <app-icon name="users" [size]="17" />
+      Behind them: four hygienists, two patient coordinators and a very good coffee machine.
+    </p>
+  </div>
+</section>

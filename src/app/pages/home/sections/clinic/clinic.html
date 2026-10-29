@@ -1,0 +1,68 @@
+<section id="clinic" class="section section--tint clinic" aria-labelledby="clinic-title">
+  <div class="container clinic__grid">
+    <div class="clinic__media" appReveal>
+      <figure>
+        <img
+          src="images/clinic-room.jpg"
+          alt="Lumina's bright treatment room with a modern dental chair, teal cabinetry and natural light"
+          width="1200"
+          height="900"
+          loading="lazy"
+        />
+      </figure>
+
+      <div class="clinic__address-card">
+        <span class="clinic__address-icon"><app-icon name="pin" [size]="18" /></span>
+        <div>
+          <strong>NW Portland</strong>
+          <span>{{ clinic.addressLine1 }}</span>
+        </div>
+        <a [href]="clinic.mapsUrl" target="_blank" rel="noopener" class="clinic__directions">
+          Directions
+          <app-icon name="arrow-up-right" [size]="14" />
+        </a>
+      </div>
+    </div>
+
+    <div class="clinic__copy" appReveal [revealDelay]="110">
+      <span class="eyebrow">The clinic</span>
+      <h2 id="clinic-title" class="section-title">A studio, <em>not a surgery.</em></h2>
+      <p class="lead">
+        Natural light, quiet rooms and a team that runs on time. We built Lumina to feel like the
+        calmest part of your day — not the part you dread.
+      </p>
+
+      <div class="clinic__details">
+        <div class="clinic__detail">
+          <h3><app-icon name="clock" [size]="17" /> Opening hours</h3>
+          <ul class="clinic__hours">
+            @for (row of hours; track row.day) {
+              <li>
+                <span>{{ row.day }}</span>
+                <span>{{ row.time }}</span>
+              </li>
+            }
+          </ul>
+        </div>
+
+        <div class="clinic__detail">
+          <h3><app-icon name="pin" [size]="17" /> Getting here</h3>
+          <p>
+            Two blocks from the NW 23rd streetcar, with free on-site parking and a step-free
+            entrance on Quimby Street.
+          </p>
+          <a class="text-link" [href]="clinic.mapsUrl" target="_blank" rel="noopener">
+            Open in maps
+            <app-icon name="arrow-up-right" [size]="14" />
+          </a>
+        </div>
+      </div>
+
+      <ul class="clinic__amenities" aria-label="Clinic amenities">
+        @for (amenity of amenities; track amenity) {
+          <li><app-icon name="check" [size]="13" /> {{ amenity }}</li>
+        }
+      </ul>
+    </div>
+  </div>
+</section>

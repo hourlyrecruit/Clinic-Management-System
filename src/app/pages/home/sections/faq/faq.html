@@ -1,0 +1,65 @@
+<section id="faqs" class="section faq" aria-labelledby="faq-title">
+  <div class="container faq__grid">
+    <div class="faq__intro" appReveal>
+      <span class="eyebrow">Good to know</span>
+      <h2 id="faq-title" class="section-title">Questions, <em>answered.</em></h2>
+      <p class="lead">
+        The things patients ask us most — about cover, comfort and what actually happens in the
+        chair.
+      </p>
+
+      <div class="faq__support">
+        <span class="faq__support-icon"><app-icon name="chat" [size]="22" /></span>
+        <h3>Still wondering about something?</h3>
+        <p>
+          Our care team answers website messages within one working day — or pick up the phone and
+          talk to a real person.
+        </p>
+        <div class="faq__support-actions">
+          <button
+            type="button"
+            class="btn btn--light btn--sm"
+            (click)="support.open('A question about the clinic')"
+          >
+            Chat with the care team
+            <app-icon name="arrow-right" [size]="15" />
+          </button>
+          <a class="faq__call" [href]="clinic.phoneHref">
+            <app-icon name="phone" [size]="15" />
+            {{ clinic.phoneDisplay }}
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="faq__list" appReveal [revealDelay]="90">
+      @for (faq of faqs; track faq.question; let index = $index) {
+        <div class="faq__item" [class.is-open]="openIndex() === index">
+          <h3>
+            <button
+              type="button"
+              class="faq__question"
+              [id]="'faq-question-' + index"
+              [attr.aria-expanded]="openIndex() === index"
+              [attr.aria-controls]="'faq-answer-' + index"
+              (click)="toggle(index)"
+            >
+              <span>{{ faq.question }}</span>
+              <span class="faq__chevron"><app-icon name="chevron-down" [size]="17" /></span>
+            </button>
+          </h3>
+          @if (openIndex() === index) {
+            <div
+              class="faq__answer"
+              [id]="'faq-answer-' + index"
+              role="region"
+              [attr.aria-labelledby]="'faq-question-' + index"
+            >
+              <p>{{ faq.answer }}</p>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</section>

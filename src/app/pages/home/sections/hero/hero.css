@@ -1,0 +1,506 @@
+:host {
+  display: block;
+}
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  padding-bottom: clamp(1.5rem, 3vw, 2.5rem);
+  background:
+    radial-gradient(900px 520px at 92% -12%, #d5edf6 0%, rgba(213, 237, 246, 0) 62%),
+    radial-gradient(700px 480px at -8% 108%, #e2f3f0 0%, rgba(226, 243, 240, 0) 62%),
+    linear-gradient(180deg, #f8fdff 0%, #eff9fc 62%, #f7fcfe 100%);
+}
+
+.hero__backdrop {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.hero__grid {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(14, 124, 130, 0.16) 1px, transparent 1px);
+  background-size: 30px 30px;
+  mask-image: linear-gradient(115deg, #000 0%, transparent 46%);
+  -webkit-mask-image: linear-gradient(115deg, #000 0%, transparent 46%);
+  opacity: 0.6;
+}
+
+.hero__orb {
+  width: clamp(120px, 16vw, 210px);
+  height: clamp(120px, 16vw, 210px);
+  top: -3rem;
+  right: -2.5rem;
+  opacity: 0.55;
+  filter: blur(0.5px);
+}
+
+.hero__ring {
+  position: absolute;
+  right: clamp(2rem, 8vw, 7rem);
+  top: 42%;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 1px dashed rgba(14, 124, 130, 0.25);
+}
+
+.hero__inner {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.03fr) minmax(0, 0.97fr);
+  align-items: center;
+  gap: clamp(2.25rem, 5vw, 4.5rem);
+  padding-block: clamp(1.75rem, 4.5vw, 3.5rem) clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.hero__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid rgba(198, 221, 230, 0.9);
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: 0 8px 20px -18px rgba(6, 55, 63, 0.7);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--ink-soft);
+  backdrop-filter: blur(6px);
+}
+
+.hero__badge-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--teal);
+  box-shadow: 0 0 0 4px rgba(14, 124, 130, 0.14);
+}
+
+.hero h1 {
+  margin-top: 1.25rem;
+  max-width: 13ch;
+  font-size: clamp(2.85rem, 1.55rem + 4.2vw, 4.75rem);
+}
+
+.hero h1 em {
+  display: inline-block;
+}
+
+.hero .lead {
+  margin-top: 1.4rem;
+  max-width: 47ch;
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+
+.hero__proof {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin-top: 2.4rem;
+}
+
+.hero__avatars {
+  display: flex;
+  flex: none;
+}
+
+.hero__avatars img {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #f7fcfe;
+  margin-left: -12px;
+  background: #d8ecf2;
+}
+
+.hero__avatars img:first-child {
+  margin-left: 0;
+}
+
+.hero__proof-copy {
+  display: grid;
+  gap: 0.15rem;
+  font-size: 0.76rem;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.hero__stars {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--ink-soft);
+  font-size: 0.78rem;
+}
+
+.hero__stars strong {
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.hero__media {
+  position: relative;
+  justify-self: end;
+  width: 100%;
+  max-width: 520px;
+  padding-right: clamp(0.5rem, 2vw, 1.25rem);
+}
+
+.hero__photo {
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  margin: 0;
+  border-radius: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 46px 90px -46px rgba(4, 63, 71, 0.7);
+  aspect-ratio: 5 / 5.9;
+  background: #dcecf1;
+}
+
+.hero__photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 58% 42%;
+}
+
+.hero__photo-caption {
+  position: absolute;
+  left: 0.9rem;
+  right: 0.9rem;
+  bottom: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 0.85rem;
+  border-radius: 14px;
+  background: rgba(6, 38, 45, 0.55);
+  backdrop-filter: blur(10px);
+  color: #eaf7f8;
+  font-size: 0.72rem;
+  line-height: 1.4;
+}
+
+.float-card {
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.7rem 0.9rem;
+  border-radius: 18px;
+  background: #fff;
+  border: 1px solid rgba(219, 233, 239, 0.9);
+  box-shadow: 0 24px 50px -24px rgba(4, 55, 63, 0.5);
+  animation: float 7s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.float-card--opening {
+  top: 1.5rem;
+  left: clamp(-1.5rem, -2vw, -0.75rem);
+}
+
+.float-card--dentist {
+  bottom: 4.5rem;
+  left: clamp(-2rem, -3vw, -1rem);
+  animation-delay: -2.4s;
+}
+
+.float-card__icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex: none;
+  border-radius: 12px;
+  background: var(--mint);
+  color: var(--teal-deep);
+}
+
+.float-card__label {
+  display: block;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--teal-deep);
+}
+
+.float-card strong {
+  display: block;
+  font-size: 0.82rem;
+  line-height: 1.3;
+  color: var(--ink);
+}
+
+.float-card--dentist img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #e8f2f5;
+}
+
+.float-card--dentist div {
+  display: grid;
+  line-height: 1.3;
+}
+
+.float-card--dentist div span {
+  font-size: 0.68rem;
+  color: var(--muted);
+}
+
+.float-card__badge {
+  margin-left: 0.15rem;
+  padding: 0.22rem 0.5rem;
+  border-radius: 999px;
+  background: var(--mint);
+  color: var(--teal-deep);
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+}
+
+.float-card__live {
+  width: 7px;
+  height: 7px;
+  margin-left: 0.15rem;
+  border-radius: 50%;
+  background: #3fbf9a;
+  box-shadow: 0 0 0 3px rgba(63, 191, 154, 0.18);
+}
+
+.hero__seal {
+  position: absolute;
+  z-index: 2;
+  right: -0.5rem;
+  bottom: 1.6rem;
+  display: grid;
+  justify-items: center;
+  gap: 1px;
+  width: 104px;
+  height: 104px;
+  align-content: center;
+  padding: 0.5rem;
+  border-radius: 50%;
+  background: linear-gradient(150deg, #0d7b81, #053f47);
+  color: #fff;
+  text-align: center;
+  box-shadow: 0 20px 40px -20px rgba(4, 55, 63, 0.9);
+  transform: rotate(-6deg);
+}
+
+.hero__seal-stars {
+  display: flex;
+  gap: 1px;
+  color: #ffd27a;
+}
+
+.hero__seal strong {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.hero__seal span:last-child {
+  font-size: 0.55rem;
+  letter-spacing: 0.04em;
+  color: #bfe4e4;
+  max-width: 70px;
+  line-height: 1.2;
+}
+
+.hero__assurance {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.8rem 1.6rem;
+  padding-top: 1.6rem;
+  border-top: 1px solid rgba(198, 221, 230, 0.6);
+  font-size: 0.78rem;
+}
+
+.hero__assurance-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.hero__assurance-logos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.4rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: #5d7c84;
+}
+
+.hero__assurance-divider {
+  width: 1px;
+  height: 18px;
+  background: var(--line-strong);
+}
+
+.hero__assurance-note {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--teal-deep);
+  font-weight: 600;
+}
+
+@media (max-width: 1080px) {
+  .hero__inner {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.85fr);
+    gap: 2rem;
+  }
+
+  .float-card--dentist {
+    display: none;
+  }
+
+  .hero__seal {
+    width: 88px;
+    height: 88px;
+    right: -0.25rem;
+  }
+}
+
+@media (max-width: 880px) {
+  .hero__inner {
+    grid-template-columns: 1fr;
+    padding-top: 1.5rem;
+  }
+
+  .hero h1 {
+    max-width: 16ch;
+  }
+
+  .hero__media {
+    justify-self: center;
+    max-width: 480px;
+    margin-top: 1.25rem;
+    padding-right: 0;
+  }
+
+  .hero__photo {
+    aspect-ratio: 4 / 4.4;
+    border-radius: 32px;
+  }
+
+  .hero__orb {
+    top: -4rem;
+    right: -4rem;
+  }
+
+  .hero__ring {
+    display: none;
+  }
+
+  .float-card--dentist {
+    display: flex;
+  }
+
+  .hero__seal {
+    right: 0.5rem;
+    bottom: 1.4rem;
+  }
+
+  .float-card--opening {
+    left: -0.5rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .hero h1 {
+    font-size: clamp(2.5rem, 10vw, 3.25rem);
+    max-width: 14ch;
+  }
+
+  .hero__actions .btn {
+    width: 100%;
+  }
+
+  .hero__proof {
+    align-items: flex-start;
+    margin-top: 2rem;
+  }
+
+  .hero__photo {
+    aspect-ratio: 4 / 4.8;
+  }
+
+  .hero__photo-caption {
+    font-size: 0.66rem;
+    padding: 0.55rem 0.7rem;
+  }
+
+  .float-card {
+    padding: 0.6rem 0.75rem;
+  }
+
+  .float-card--dentist {
+    bottom: 6.5rem;
+    left: 0.5rem;
+  }
+
+  .float-card__icon {
+    width: 34px;
+    height: 34px;
+  }
+
+  .hero__seal {
+    width: 76px;
+    height: 76px;
+    right: 0.35rem;
+    bottom: 0.75rem;
+  }
+
+  .hero__seal strong {
+    font-size: 1.2rem;
+  }
+
+  .hero__seal span:last-child {
+    display: none;
+  }
+
+  .hero__assurance {
+    gap: 0.7rem 1rem;
+  }
+
+  .hero__assurance-logos {
+    gap: 1rem;
+  }
+
+  .hero__assurance-divider {
+    display: none;
+  }
+}

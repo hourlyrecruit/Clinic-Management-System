@@ -1,0 +1,145 @@
+npm notice run clinic@0.0.0 npx
+npm notice run ng serve --host 127.0.0.1 --port 4200
+❯ Building...
+✔ Building...
+Initial chunk files | Names         |  Raw size
+styles.css          | styles        |   8.78 kB | 
+main.js             | main          |   3.44 kB | 
+chunk-VUJOFXKG.js   | -             | 987 bytes | 
+
+                    | Initial total |  13.20 kB
+
+Lazy chunk files    | Names         |  Raw size
+chunk-URFSCWOB.js   | home          | 193.67 kB | 
+chunk-3WHY5IC7.js   | booking       | 102.85 kB | 
+chunk-ZMABKM54.js   | reception     |  79.02 kB | 
+chunk-KLRCNR5X.js   | -             |  75.45 kB | 
+chunk-RLZ2NKWL.js   | -             |  35.95 kB | 
+
+Application bundle generation complete. [4.727 seconds] - 2026-10-29T07:49:47.454Z
+
+Watch mode enabled. Watching for file changes...
+NOTE: Raw file sizes do not reflect development server per-request transformations.
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://127.0.0.1:[1m4200[22m/[39m
+❯ Changes detected. Rebuilding...
+✔ Changes detected. Rebuilding...
+Initial chunk files | Names     |  Raw size
+main.js             | main      |   3.44 kB | 
+
+Lazy chunk files    | Names     |  Raw size
+chunk-6LZDY4J3.js   | home      | 193.67 kB | 
+chunk-Z4EOQL55.js   | booking   | 102.85 kB | 
+chunk-CX7RDZGY.js   | receptio✔ Changes detected. Rebuilding...
+Initial chunk files | Names     |  Raw size
+main.js             | main      |   3.44 kB | 
+
+Lazy chunk files    | Names     |  Raw size
+chunk-6LZDY4J3.js   | home      | 193.67 kB | 
+chunk-Z4EOQL55.js   | booking   | 102.85 kB ✔ Changes detected. Rebuilding...
+Initial chunk files | Names     |  Raw size
+main.js             | main      |   3.44 kB | 
+
+Lazy chunk files    | Names     |  Raw size
+chunk-IBO7UKOA.js   | home      | 193.75 kB | 
+chunk-GE6YNWFD.js   | booking   | 103.07 kB | 
+chunk-V4JWPBXK.js   | receptio✔ Changes detected. Rebuilding...
+Initial chunk files | Names     |  Raw size
+main.js             | main      |   3.44 kB | 
+
+Lazy chunk files    | Names     |  Raw size
+chunk-IBO7UKOA.js   | home      | 193.75 kB | 
+chunk-G❯ Changes detected. Rebuilding...
+✔ Changes detected. Rebuilding...
+Initial chunk files | Names   |  Raw size
+main.js             | main    |   3.44 kB | 
+
+Lazy chunk files    | Names   |  Raw size
+chunk-LLTQYDJN.js   | home    | 193.75 kB | 
+chunk-PL45NSU6.js   | booking | 103.07 kB | 
+chunk-IEQDOZNO.js   | -       |  75.70 kB | 
+
+Application bundle generation complete. [1.398 seconds] - 2026-10-29T08:28:53.712Z
+
+Page reload sent to client(s).
+❯ Changes detected. Rebuilding...
+✔ Changes detected. Rebuilding...
+Initial chunk files | Names | Raw size
+main.js             | main  |  4.65 kB | 
+
+Application bundle generation complete. [1.935 seconds] - 2026-10-29T08:30:49.067Z
+
+Page reload sent to client(s).
+[2m2:00:50 pm[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [optimizer] bundling dependencies...
+[2m2:00:51 pm[22m [36m[1m[vite][22m[39m [90m[2m(client)[22m[39m [32mdependencies optimized: [33m@angular/core/rxjs-interop, rxjs[32m[39m
+[2m2:00:51 pm[22m [36m[1m[vite]❯ Changes detected. Rebuilding...
+✔ Changes detected. Rebuilding...
+Initial chunk files | Names | Raw size
+main.js             | main  |  4.64 kB | 
+
+Application bundle generation complete. [0.744 seconds] - 2026-10-29T08:34:28.738Z
+
+Page reload sent to client(s).
+❯ Changes detected. Rebuilding...
+✔ Changes detected. Rebuilding...
+Initial chunk files | Names     |  Raw size
+main.js             | main      |   4.64 kB | 
+
+Lazy chunk files    | Names     |  Raw size
+chunk-AHYOZ3QV.js   | home      | 193.75 kB | 
+chunk-FUDG4CB4.js   | booking   | 103.07 kB | 
+chunk-DS2QQP63.js   | reception |  79.02 kB | 
+chunk-U2P5EHOE.js   | -         |  75.70 kB | 
+chunk-UMGWDEPX.js   | -         |  36.23 kB | 
+
+Application bundle generation complete. [0.917 seconds] - 2026-10-29T08:34:29.660Z
+
+Page reload sent to client(s).
+❯ Changes detected. Rebuilding...
+✔ Changes detected. Rebuilding...
+
+No output file changes.
+
+Application bundle generation complete. [1.931 seconds] - 2026-10-29T08:34:31.598Z
+
+Component update sent to client(s).
+❯ Changes detected. Rebuilding...
+✔ Changes detected. Rebuilding...
+Initial chunk files | Names   |  Raw size
+main.js             | main    |   4.64 kB | 
+
+Lazy chunk files    | Names   |  Raw size
+chunk-TSETP5QU.js   | home    | 193.74 kB | 
+chunk-VENGCFSX.js   | booking | 103.33 kB | 
+chunk-ZZZCFMRJ.js   | -       |  75.75 kB | 
+
+Application bundle generation complete. [4.081 seconds] - 2026-10-29T08:34:35.685Z
+
+Page reload sent to client(s).
+❯ Changes detected. Rebuilding...
+✔ Changes detected. Rebuilding...
+Initial chunk files | Names |  Raw size
+main.js             | main  |   4.64 kB | 
+
+Lazy chunk files    | Names |  Raw size
+chunk-E72SRK3G.js   | home  | 193.56 kB | 
+
+Application bundle generation complete. [2.420 seconds] - 2026-10-29T08:34:38.241Z
+
+Page reload sent to client(s).
+❯ Changes detected. Rebuilding...
+✔ Changes detected. Rebuilding...
+Initial chunk files | Names     |  Raw size
+main.js   ✔ Changes detected. Rebuilding...
+Initial chunk files | Names     |  Raw size
+main.js             | main      |   4.64 kB | 
+
+Lazy chunk files    | Names     |  Raw size
+chunk-RDTRF6JN.js   | home      | 193.58 kB | 
+chunk-ZJIRIZAX.js   | booking   | 103.33 kB | 
+chunk-JEUILOC6.js   | reception |  79.20 kB | 
+chunk-ZQX3BBRW.js   | -         |  75.75 kB | 
+chunk-HNEV354F.js   | -         |  36.27 kB | 
+
+Application bundle generation complete. [4.104 seconds] - 2026-10-29T08:34:42.345Z
+
+Page reload sent to client(s).

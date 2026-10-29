@@ -1,0 +1,228 @@
+:host {
+  display: block;
+}
+
+.site-footer {
+  background:
+    radial-gradient(circle at 82% -10%, rgba(111, 211, 206, 0.22), transparent 45%),
+    radial-gradient(circle at 8% 110%, rgba(17, 135, 141, 0.28), transparent 40%), #05353d;
+  color: #d7e8ea;
+  padding-top: clamp(3rem, 6vw, 4.75rem);
+}
+
+.footer-top {
+  display: grid;
+  grid-template-columns: 1.4fr 0.7fr 0.9fr 1.1fr;
+  gap: clamp(1.75rem, 4vw, 3.5rem);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.brand__mark {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  color: var(--teal-dark);
+  background: linear-gradient(150deg, #bff0ec, #6fd3ce);
+}
+
+.brand__text {
+  display: grid;
+  line-height: 1.05;
+}
+
+.brand__text strong {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: #fff;
+}
+
+.brand__text small {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #8fd3d4;
+  margin-top: 3px;
+}
+
+.footer-brand p {
+  margin-top: 1.15rem;
+  max-width: 34ch;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: #a9c7cb;
+}
+
+.footer-rating {
+  margin-top: 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.45rem 0.8rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 0.76rem;
+  color: #cfe4e6;
+}
+
+.footer-heading {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #7fc4c7;
+  margin-bottom: 1.1rem;
+}
+
+.footer-links {
+  display: grid;
+  gap: 0.6rem;
+  font-size: 0.88rem;
+}
+
+.footer-links a {
+  color: #d7e8ea;
+  transition: color 0.2s ease;
+}
+
+.footer-links a:hover {
+  color: #9de4e0;
+}
+
+address {
+  font-style: normal;
+  display: grid;
+  gap: 0.65rem;
+}
+
+.footer-contact {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: #d7e8ea;
+  transition: color 0.2s ease;
+}
+
+.footer-contact:hover {
+  color: #9de4e0;
+}
+
+.footer-contact app-icon {
+  margin-top: 2px;
+  color: #7fc4c7;
+}
+
+.footer-hours {
+  display: grid;
+  gap: 0.4rem;
+  margin-top: 1.1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 0.8rem;
+}
+
+.footer-hours li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  color: #a9c7cb;
+}
+
+.footer-hours li span:last-child {
+  color: #dceef0;
+  text-align: right;
+}
+
+.footer-emergency {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin-top: clamp(2rem, 4vw, 3rem);
+  padding: 1rem 1.25rem;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: 0.86rem;
+  color: #cfe4e6;
+}
+
+.footer-emergency__icon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex: none;
+  border-radius: 50%;
+  background: rgba(111, 211, 206, 0.18);
+  color: #9de4e0;
+}
+
+.footer-emergency strong {
+  color: #fff;
+  font-weight: 700;
+}
+
+.footer-emergency a {
+  color: #9de4e0;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.footer-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1.5rem;
+  margin-top: clamp(2rem, 4vw, 3rem);
+  padding-block: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 0.76rem;
+  color: #8fb3b8;
+}
+
+.footer-legal {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+}
+
+.footer-legal a {
+  color: #cfe4e6;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+@media (max-width: 960px) {
+  .footer-top {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .footer-brand {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 560px) {
+  .footer-top {
+    grid-template-columns: 1fr;
+  }
+
+  .footer-emergency {
+    align-items: flex-start;
+  }
+}

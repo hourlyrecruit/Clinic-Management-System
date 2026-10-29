@@ -1,0 +1,86 @@
+<div class="support">
+  @if (support.isOpen()) {
+    <section
+      id="care-panel"
+      class="chat-panel"
+      role="dialog"
+      aria-label="Lumina care team chat"
+      (keydown.escape)="close()"
+    >
+      <header class="chat-head">
+        <div class="chat-head__identity">
+          <span class="chat-avatar"><app-icon name="tooth" [size]="20" /></span>
+          <div>
+            <p class="chat-title">Lumina care team</p>
+            <p class="chat-status"><span class="dot"></span> Usually replies in minutes</p>
+          </div>
+        </div>
+        <button type="button" class="chat-close" (click)="close()" aria-label="Close care chat">
+          <app-icon name="close" [size]="18" />
+        </button>
+      </header>
+
+      <div class="chat-thread" aria-live="polite">
+        @for (message of messages(); track message.id) {
+          <div class="bubble" [class.bubble--patient]="message.from === 'patient'">
+            {{ message.text }}
+          </div>
+        }
+        @if (typing()) {
+          <div class="bubble bubble--typing" aria-label="Care team is typing">
+            <span></span><span></span><span></span>
+          </div>
+        }
+      </div>
+
+      <div class="chat-quick">
+        @for (topic of quickTopics; track topic) {
+          <button type="button" class="quick-chip" (click)="send(topic)">{{ topic }}</button>
+        }
+      </div>
+
+      <form class="chat-composer" (submit)="onSubmit($event)">
+        <label class="sr-only" for="care-chat-input">Message the care team</label>
+        <textarea
+          #chatInput
+          id="care-chat-input"
+          rows="1"
+          [value]="draft()"
+          (input)="updateDraft($event)"
+          (keydown)="onKeydown($event)"
+          placeholder="Ask us anything…"
+        ></textarea>
+        <button
+          type="submit"
+          class="chat-send"
+          [disabled]="!draft().trim()"
+          aria-label="Send message"
+        >
+          <app-icon name="arrow-right" [size]="18" />
+        </button>
+      </form>
+      <p class="chat-footnote">
+        For urgent dental pain call
+        <a [href]="clinic.emergencyPhoneHref">{{ clinic.emergencyPhoneDisplay }}</a>
+      </p>
+    </section>
+  }
+
+  <button
+    type="button"
+    class="chat-fab"
+    [class.is-open]="support.isOpen()"
+    [attr.aria-expanded]="support.isOpen()"
+    aria-controls="care-panel"
+    [attr.aria-label]="support.isOpen() ? 'Close care team chat' : 'Open care team chat'"
+    (click)="support.toggle()"
+  >
+    <span class="chat-fab__icon">
+      <app-icon [name]="support.isOpen() ? 'close' : 'chat'" [size]="22" />
+    </span>
+    <span class="chat-fab__label">Care team</span>
+    @if (!support.isOpen()) {
+      <span class="chat-fab__ping" aria-hidden="true"></span>
+    }
+  </button>
+</div>
