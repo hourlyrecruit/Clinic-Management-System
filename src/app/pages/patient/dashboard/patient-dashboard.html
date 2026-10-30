@@ -1,0 +1,261 @@
+<section class="db-page">
+  <div class="db-page-head">
+    <div>
+      <span class="eyebrow">Patient dashboard</span>
+      <h1>{{ greeting() }}, <em>{{ firstName() }}.</em></h1>
+      <p>Everything about your care in one calm place — your next visit, your history and the team looking after you.</p>
+    </div>
+    <div class="db-actions">
+      <a class="btn btn--primary" routerLink="/patient/book-appointment">
+        <app-icon name="plus" [size]="16" />
+        Book a visit
+      </a>
+      <a class="btn btn--outline" routerLink="/patient/appointments">View appointments</a>
+    </div>
+  </div>
+
+  @if (registered()) {
+    <p class="db-notice db-notice--teal" role="status">
+      <app-icon name="check-circle" [size]="16" />
+      Your demo patient account is ready. This is the only place your details and appointments live.
+    </p>
+  }
+
+  <div class="db-stats db-stagger">
+    <article class="db-stat">
+      <div class="db-stat__top">
+        <span class="db-stat__label">Upcoming visits</span>
+        <span class="db-stat__icon"><app-icon name="calendar" [size]="17" /></span>
+      </div>
+      <strong class="db-stat__value">{{ upcoming().length }}</strong>
+      <span class="db-stat__hint">
+        @if (nextAppointment(); as next) {
+          Next: {{ relative(next.appointmentDate) }}
+        } @else {
+          Nothing booked yet
+        }
+      </span>
+    </article>
+
+    <article class="db-stat">
+      <div class="db-stat__top">
+        <span class="db-stat__label">Completed visits</span>
+        <span class="db-stat__icon db-stat__icon--green">
+          <app-icon name="check-circle" [size]="17" />
+        </span>
+      </div>
+      <strong class="db-stat__value">{{ completedCount() }}</strong>
+      <span class="db-stat__hint">Since joining Lumina</span>
+    </article>
+
+    <article class="db-stat">
+      <div class="db-stat__top">
+        <span class="db-stat__label">Your clinician</span>
+        <span class="db-stat__icon db-stat__icon--blue">
+          <app-icon name="stethoscope" [size]="17" />
+        </span>
+      </div>
+      @if (nextAppointment(); as next) {
+        <strong class="db-stat__value db-stat__value--name">{{ doctorName(next.doctorId) }}</strong>
+        <span class="db-stat__hint">{{ serviceName(next.serviceId) }}</span>
+      } @else {
+        <strong class="db-stat__value db-stat__value--name">Meet the team</strong>
+        <span class="db-stat__hint">Choose a clinician when you book</span>
+      }
+    </article>
+  </div>
+
+  <div class="db-grid db-grid--split">
+    <div class="db-grid">
+      @if (nextAppointment(); as next) {
+        <section class="next-card" aria-labelledby="next-title">
+          <div class="next-card__head">
+            <div>
+              <span class="next-card__eyebrow">Next appointment</span>
+              <h2 id="next-title">{{ serviceName(next.serviceId) }}</h2>
+            </div>
+            <app-status-badge [status]="next.status" />
+          </div>
+
+          <div class="next-card__body">
+            <div class="next-card__date">
+              <span>{{ dayParts(next.appointmentDate).weekday }}</span>
+              <strong>{{ dayParts(next.appointmentDate).day }}</strong>
+              <span>{{ dayParts(next.appointmentDate).month }}</span>
+            </div>
+
+            <div class="next-card__info">
+              <p class="next-card__when">
+                {{ relative(next.appointmentDate) }} · {{ time(next.startTime) }} –
+                {{ time(next.endTime) }}
+              </p>
+              <div class="next-card__doctor">
+                <img [src]="doctorImage(next.doctorId)" alt="" width="36" height="36" />
+                <span>
+                  <strong>{{ doctorName(next.doctorId) }}</strong>
+                  <small>{{ doctorRole(next.doctorId) }}</small>
+                </span>
+              </div>
+              @if (next.reason) {
+                <p class="next-card__reason">“{{ next.reason }}”</p>
+              }
+            </div>
+          </div>
+
+          <div class="next-card__foot">
+            <span class="next-card__ref">Ref {{ next.reference }}</span>
+            <div class="db-actions">
+              <a class="btn btn--light btn--sm" routerLink="/patient/appointments">Details</a>
+              <a class="btn btn--ghost-light btn--sm" routerLink="/patient/book-appointment">
+                Book another
+              </a>
+            </div>
+          </div>
+        </section>
+      } @else {
+        <section class="db-card">
+          <div class="db-empty">
+            <span class="db-empty__icon"><app-icon name="calendar" [size]="22" /></span>
+            <h2>No visits booked yet</h2>
+            <p>Choose a treatment, a clinician and a time that works. Your details are already filled in.</p>
+            <a class="btn btn--primary btn--sm" routerLink="/patient/book-appointment">
+              Book your first visit
+              <app-icon name="arrow-right" [size]="15" />
+            </a>
+          </div>
+        </section>
+      }
+
+      <section class="db-card">
+        <div class="db-card__head">
+          <div>
+            <h2>Appointment history</h2>
+            <p>Past visits and any changes to your bookings.</p>
+          </div>
+          <a class="db-link" routerLink="/patient/appointments">
+            View all
+            <app-icon name="arrow-right" [size]="13" />
+          </a>
+        </div>
+
+        @if (history().length) {
+          <div class="db-list">
+            @for (item of history(); track item.id) {
+              <div class="db-row">
+                <div class="db-row__time">
+                  <strong>{{ dayParts(item.appointmentDate).day }} {{ dayParts(item.appointmentDate).month }}</strong>
+                  <span>{{ time(item.startTime) }}</span>
+                </div>
+                <div class="db-row__main">
+                  <strong>{{ serviceName(item.serviceId) }}</strong>
+                  <span>{{ doctorName(item.doctorId) }} · Ref {{ item.reference }}</span>
+                </div>
+                <div class="db-row__side">
+                  <app-status-badge [status]="item.status" />
+                </div>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="db-empty">
+            <span class="db-empty__icon"><app-icon name="clock" [size]="20" /></span>
+            <h3>Nothing here yet</h3>
+            <p>After your first visit, the history will collect here automatically.</p>
+          </div>
+        }
+      </section>
+    </div>
+
+    <aside class="db-grid">
+      <section class="db-card">
+        <div class="db-card__head">
+          <div>
+            <h2>Your details</h2>
+            <p>Used to prefill every booking.</p>
+          </div>
+          <button type="button" class="db-icon-btn" aria-label="Edit profile" (click)="openProfile()">
+            <app-icon name="edit" [size]="16" />
+          </button>
+        </div>
+        <div class="db-card__body profile">
+          <span class="profile__avatar">{{ initials() }}</span>
+          <strong class="profile__name">{{ user()?.name }}</strong>
+          <span class="profile__email">{{ user()?.email }}</span>
+          <ul class="profile__list">
+            <li>
+              <app-icon name="phone" [size]="15" />
+              <span>{{ user()?.phone }}</span>
+            </li>
+            <li>
+              <app-icon name="shield" [size]="15" />
+              <span>Demo patient record</span>
+            </li>
+          </ul>
+          <button type="button" class="btn btn--outline btn--sm btn--block" (click)="openProfile()">
+            Edit name or phone
+          </button>
+        </div>
+      </section>
+
+      <section class="db-card care-card">
+        <div class="db-card__body">
+          <span class="care-card__icon"><app-icon name="chat" [size]="18" /></span>
+          <h2>Need the team?</h2>
+          <p>Reception can help with changes, insurance or a concern before your visit.</p>
+          <a class="care-card__phone" href="tel:+15035550142">(503) 555-0142</a>
+          <span class="care-card__hours">Mon–Thu 8–6 · Fri 8–4 · Sat 9–2</span>
+        </div>
+      </section>
+    </aside>
+  </div>
+</section>
+
+@if (toast(); as message) {
+  <div class="db-toast" role="status" aria-live="polite">
+    <app-icon name="check" [size]="16" />
+    {{ message }}
+  </div>
+}
+
+<dialog
+  #profileDialog
+  class="db-modal db-modal--sm"
+  aria-labelledby="profile-title"
+  (cancel)="closeProfile($event)"
+>
+  <div class="db-modal__body">
+    <span class="db-modal__icon"><app-icon name="user" [size]="21" /></span>
+    <h2 id="profile-title">Edit your details</h2>
+    <p>Name and phone are used to prefill bookings. Your sign-in email cannot be changed here.</p>
+
+    <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" novalidate class="profile-form">
+      <div class="field">
+        <label for="profile-name">Full name</label>
+        <input id="profile-name" class="input" type="text" formControlName="name" autocomplete="name" />
+        @if (profileForm.controls.name.touched && profileForm.controls.name.invalid) {
+          <p class="error-text">Enter your full name.</p>
+        }
+      </div>
+      <div class="field">
+        <label for="profile-phone">Phone</label>
+        <input id="profile-phone" class="input" type="tel" formControlName="phone" autocomplete="tel" />
+        @if (profileForm.controls.phone.touched && profileForm.controls.phone.invalid) {
+          <p class="error-text">Enter a contact number.</p>
+        }
+      </div>
+      <div class="field">
+        <label for="profile-email">Email</label>
+        <input id="profile-email" class="input" type="email" [value]="user()?.email" disabled />
+      </div>
+
+      @if (profileError()) {
+        <p class="auth-alert auth-alert--error" role="alert">{{ profileError() }}</p>
+      }
+
+      <div class="db-modal__actions">
+        <button type="button" class="btn btn--outline btn--sm" (click)="closeProfile()">Cancel</button>
+        <button type="submit" class="btn btn--primary btn--sm">Save changes</button>
+      </div>
+    </form>
+  </div>
+</dialog>

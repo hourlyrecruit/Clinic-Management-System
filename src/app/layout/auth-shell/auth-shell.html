@@ -1,0 +1,47 @@
+<div class="auth">
+  <aside class="auth-aside" [style.--auth-image]="'url(' + image() + ')'">
+    <div class="auth-aside__top">
+      <a class="auth-brand" routerLink="/" aria-label="Lumina Dental Studio home">
+        <span class="auth-brand__mark"><app-icon name="tooth" [size]="21" /></span>
+        <span class="auth-brand__text">
+          <strong>Lumina</strong>
+          <small>Dental Studio</small>
+        </span>
+      </a>
+      <a class="auth-back" routerLink="/">
+        Back to website
+        <app-icon name="arrow-up-right" [size]="14" />
+      </a>
+    </div>
+
+    <div class="auth-aside__body">
+      <span class="eyebrow eyebrow--light">{{ asideEyebrow() }}</span>
+      <h2>{{ asideTitle() }}</h2>
+      <p>{{ asideText() }}</p>
+      <ul class="auth-points">
+        @for (point of asidePoints(); track point) {
+          <li>
+            <span class="auth-points__mark"><app-icon name="check" [size]="12" /></span>
+            {{ point }}
+          </li>
+        }
+      </ul>
+    </div>
+
+    <figure class="auth-quote">
+      <app-icon name="quote" [size]="22" />
+      <blockquote>{{ quote() }}</blockquote>
+      <figcaption>{{ quoteAuthor() }}</figcaption>
+    </figure>
+  </aside>
+
+  <main id="main-content" class="auth-main">
+    <div class="auth-main__inner">
+      <ng-content />
+      <p class="auth-demo-note">
+        <app-icon name="shield" [size]="14" />
+        Demo environment — accounts and appointments live only in this browser.
+      </p>
+    </div>
+  </main>
+</div>

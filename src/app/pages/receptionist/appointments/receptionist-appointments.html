@@ -1,0 +1,235 @@
+<section class="db-page">
+  <div class="db-page-head">
+    <div>
+      <span class="eyebrow">Appointment management</span>
+      <h1>The whole diary, <em>under control.</em></h1>
+      <p>
+        Search, filter and change any appointment in the demo clinic. Every change updates the
+        patient and clinician views immediately.
+      </p>
+    </div>
+    <div class="db-actions">
+      <a class="btn btn--primary" routerLink="/receptionist/book-appointment">
+        <app-icon name="plus" [size]="16" />
+        Book for a patient
+      </a>
+    </div>
+  </div>
+
+  <div class="diary-summary">
+    <span><strong>{{ counts().total }}</strong> total</span>
+    <span><strong>{{ counts().today }}</strong> today</span>
+    <span class="is-pending"><strong>{{ counts().pending }}</strong> pending</span>
+    <span class="is-confirmed"><strong>{{ counts().confirmed }}</strong> confirmed</span>
+    <span class="is-cancelled"><strong>{{ counts().cancelled }}</strong> cancelled</span>
+  </div>
+
+  <section class="db-card">
+    <div class="diary-controls">
+      <div class="db-tabs" role="group" aria-label="Date range">
+        <button type="button" [class.is-active]="!dateFilter() && scope() === 'upcoming'" (click)="setScope('upcoming')">
+          Upcoming
+        </button>
+        <button type="button" [class.is-active]="!dateFilter() && scope() === 'today'" (click)="setScope('today')">
+          Today
+        </button>
+        <button type="button" [class.is-active]="!dateFilter() && scope() === 'past'" (click)="setScope('past')">
+          Past
+        </button>
+        <button type="button" [class.is-active]="!dateFilter() && scope() === 'all'" (click)="setScope('all')">
+          All
+        </button>
+      </div>
+
+      <label class="db-search">
+        <app-icon name="search" [size]="15" />
+        <span class="sr-only">Search appointments</span>
+        <input
+          type="search"
+          placeholder="Patient, ref, phone, clinician…"
+          [value]="query()"
+          (input)="setQuery($event)"
+        />
+      </label>
+    </div>
+
+    <div class="diary-filters">
+      <label class="diary-filter">
+        <span>Date</span>
+        <input class="db-select" type="date" [value]="dateFilter()" (change)="setDate($event)" />
+      </label>
+
+      <label class="diary-filter">
+        <span>Clinician</span>
+        <select class="db-select" [value]="doctorFilter()" (change)="setDoctor($event)">
+          <option value="all">All clinicians</option>
+          @for (doctor of doctors; track doctor.id) {
+            <option [value]="doctor.id">{{ doctor.name }}</option>
+          }
+        </select>
+      </label>
+
+      <label class="diary-filter">
+        <span>Service</span>
+        <select class="db-select" [value]="serviceFilter()" (change)="setService($event)">
+          <option value="all">All services</option>
+          @for (service of services; track service.id) {
+            <option [value]="service.id">{{ service.name }}</option>
+          }
+        </select>
+      </label>
+
+      <label class="diary-filter">
+        <span>Status</span>
+        <select class="db-select" [value]="statusFilter()" (change)="setStatus($event)">
+          <option value="ALL">All statuses</option>
+          <option value="PENDING">Pending</option>
+          <option value="CONFIRMED">Confirmed</option>
+          <option value="COMPLETED">Completed</option>
+          <option value="CANCELLED">Cancelled</option>
+          <option value="NO_SHOW">No-show</option>
+        </select>
+      </label>
+
+      <button type="button" class="mini-btn diary-reset" (click)="resetFilters()">
+        <app-icon name="refresh" [size]="13" />
+        Clear
+      </button>
+
+      <span class="diary-count">{{ filtered().length }} shown</span>
+    </div>
+
+    @if (filtered().length) {
+      <div class="db-table-wrap">
+        <table class="db-table diary-table">
+          <thead>
+            <tr>
+              <th>When</th>
+              <th>Patient</th>
+              <th>Contact</th>
+              <th>Clinician</th>
+              <th>Service</th>
+              <th>Status</th>
+              <th>Booked by</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of filtered(); track item.id) {
+              <tr>
+                <td data-label="When">
+                  <div class="db-table__when">
+                    <strong>{{ relative(item.appointmentDate) }}</strong>
+                    <span>{{ dateShort(item.appointmentDate) }} · {{ time(item.startTime) }}</span>
+                    <span class="db-table__ref">{{ item.reference }}</span>
+                  </div>
+                </td>
+                <td data-label="Patient">
+                  <span class="db-table__strong">{{ item.patientName }}</span>
+                  @if (item.createdByRole === 'PATIENT') {
+                    <span class="db-table__muted">Online booking</span>
+                  } @else {
+                    <span class="db-table__muted">Front desk booking</span>
+                  }
+                </td>
+                <td data-label="Contact">
+                  <span>{{ item.phone }}</span>
+                  <span class="db-table__muted">{{ item.email || 'No email on record' }}</span>
+                </td>
+                <td data-label="Clinician">{{ doctorName(item.doctorId) }}</td>
+                <td data-label="Service">{{ serviceName(item.serviceId) }}</td>
+                <td data-label="Status"><app-status-badge [status]="item.status" /></td>
+                <td data-label="Booked by">
+                  <span class="db-table__muted diary-creator">{{ creatorName(item.createdByUserId) }}</span>
+                </td>
+                <td data-label="Actions">
+                  <div class="db-table__actions">
+                    <button type="button" class="mini-btn" (click)="openDetails(item)">
+                      <app-icon name="eye" [size]="13" />
+                      View
+                    </button>
+                    @if (item.status === 'PENDING') {
+                      <button type="button" class="mini-btn mini-btn--primary" (click)="confirm(item)">
+                        <app-icon name="check" [size]="13" />
+                        Confirm
+                      </button>
+                    }
+                    @if (item.status === 'CONFIRMED') {
+                      <button type="button" class="mini-btn" (click)="complete(item)">Complete</button>
+                    }
+                    @if (item.status === 'PENDING' || item.status === 'CONFIRMED') {
+                      <button type="button" class="mini-btn" (click)="openReschedule(item)">Move</button>
+                      <button type="button" class="mini-btn mini-btn--danger" (click)="requestCancel(item)">
+                        Cancel
+                      </button>
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <div class="db-empty">
+        <span class="db-empty__icon"><app-icon name="search" [size]="22" /></span>
+        <h2>No appointments match</h2>
+        <p>Try a wider date range, another clinician, or clear the filters.</p>
+        <button type="button" class="btn btn--outline btn--sm" (click)="resetFilters()">Clear filters</button>
+      </div>
+    }
+  </section>
+
+  <p class="db-notice">
+    <app-icon name="shield" [size]="16" />
+    Front-desk changes are stored in this browser only. Cancelling an appointment releases its slot
+    immediately; completed and no-show records cannot be reopened.
+  </p>
+</section>
+
+@if (toast(); as message) {
+  <div class="db-toast" role="status" aria-live="polite">
+    <app-icon name="check" [size]="16" />
+    {{ message }}
+  </div>
+}
+
+<app-appointment-dialog
+  [appointment]="selected()"
+  [open]="detailsOpen()"
+  (closed)="closeDetails()"
+/>
+<app-reschedule-dialog
+  [appointment]="rescheduleTarget()"
+  [open]="rescheduleOpen()"
+  (closed)="closeReschedule()"
+  (rescheduled)="onRescheduled($event)"
+/>
+
+<dialog
+  #cancelDialog
+  class="db-modal db-modal--sm"
+  aria-labelledby="cancel-appt-title"
+  (cancel)="closeCancel($event)"
+>
+  @if (cancelTarget(); as item) {
+    <div class="db-modal__body">
+      <span class="db-modal__icon db-modal__icon--warn"><app-icon name="alert" [size]="21" /></span>
+      <h2 id="cancel-appt-title">Cancel this appointment?</h2>
+      <p>
+        <strong>{{ item.patientName }}</strong> · {{ serviceName(item.serviceId) }} with
+        {{ doctorName(item.doctorId) }} on {{ relative(item.appointmentDate) }} at
+        {{ time(item.startTime) }}. The slot will be released for other bookings. This cannot be
+        undone.
+      </p>
+      <div class="db-modal__actions">
+        <button type="button" class="btn btn--outline btn--sm" (click)="closeCancel()">
+          Keep appointment
+        </button>
+        <button type="button" class="btn btn--primary btn--sm" (click)="confirmCancel()">
+          Cancel appointment
+        </button>
+      </div>
+    </div>
+  }
+</dialog>

@@ -1,0 +1,129 @@
+<div class="db-shell">
+  <aside class="db-sidebar" [class.is-open]="menuOpen()" aria-label="Dashboard navigation">
+    <a class="db-brand" routerLink="/" (click)="closeMenu()" aria-label="Lumina Dental Studio home">
+      <span class="db-brand__mark"><app-icon name="tooth" [size]="21" /></span>
+      <span class="db-brand__text">
+        <strong>Lumina</strong>
+        <small>Dental Studio</small>
+      </span>
+    </a>
+
+    @if (user(); as account) {
+      <div class="db-account">
+        <span class="db-avatar">{{ initials() }}</span>
+        <span class="db-account__text">
+          <strong>{{ account.name }}</strong>
+          <small>{{ roleLabel() }} workspace</small>
+        </span>
+      </div>
+    }
+
+    <nav class="db-nav">
+      @for (item of nav(); track item.path) {
+        <a
+          [routerLink]="item.path"
+          routerLinkActive="is-active"
+          [routerLinkActiveOptions]="{ exact: false }"
+          (click)="closeMenu()"
+        >
+          <app-icon [name]="item.icon" [size]="18" />
+          <span>{{ item.label }}</span>
+        </a>
+      }
+    </nav>
+
+    <div class="db-sidebar__foot">
+      <div class="db-sidebar__meta">
+        <span class="db-sidebar__dot"></span>
+        Demo mode · local data only
+      </div>
+      <button type="button" class="db-sidebar__link" (click)="openReset()">
+        <app-icon name="refresh" [size]="16" />
+        Reset demo data
+      </button>
+      <a class="db-sidebar__link" routerLink="/">
+        <app-icon name="arrow-left" [size]="16" />
+        Back to website
+      </a>
+      <button type="button" class="db-sidebar__link db-sidebar__link--out" (click)="signOut()">
+        <app-icon name="log-out" [size]="16" />
+        Sign out
+      </button>
+    </div>
+  </aside>
+
+  <button
+    type="button"
+    class="db-scrim"
+    [class.is-open]="menuOpen()"
+    aria-label="Close navigation"
+    tabindex="-1"
+    (click)="closeMenu()"
+  ></button>
+
+  <div class="db-main">
+    <header class="db-topbar">
+      <button
+        type="button"
+        class="db-menu"
+        [attr.aria-expanded]="menuOpen()"
+        aria-label="Open navigation"
+        (click)="toggleMenu()"
+      >
+        <app-icon name="menu" [size]="20" />
+      </button>
+
+      <div class="db-topbar__crumb">
+        <span>{{ roleLabel() }}</span>
+        <span class="db-topbar__sep">/</span>
+        <span class="db-topbar__date">{{ todayLabel }}</span>
+      </div>
+
+      <div class="db-topbar__right">
+        <span class="db-demo-pill">Demo</span>
+        @if (user(); as account) {
+          <span class="db-topbar__user">
+            <span class="db-avatar db-avatar--sm">{{ initials() }}</span>
+            <span class="db-topbar__name">{{ account.name }}</span>
+          </span>
+        }
+        <button type="button" class="db-icon-btn" aria-label="Sign out" (click)="signOut()">
+          <app-icon name="log-out" [size]="17" />
+        </button>
+      </div>
+    </header>
+
+    <main id="main-content" class="db-content">
+      <router-outlet />
+    </main>
+  </div>
+</div>
+
+<dialog
+  #resetDialog
+  class="db-modal db-modal--sm"
+  aria-labelledby="reset-title"
+  (cancel)="closeReset($event)"
+>
+  <div class="db-modal__body">
+    <span class="db-modal__icon db-modal__icon--warn"><app-icon name="refresh" [size]="22" /></span>
+    <h2 id="reset-title">Reset all demo data?</h2>
+    <p>
+      This erases every appointment, patient account, message and the current session from this
+      browser, then restores the original demo records. It cannot be undone.
+    </p>
+    <div class="db-modal__actions">
+      <button type="button" class="btn btn--outline btn--sm" (click)="closeReset()" [disabled]="resetting()">
+        Keep my data
+      </button>
+      <button type="button" class="btn btn--primary btn--sm" (click)="confirmReset()" [disabled]="resetting()">
+        @if (resetting()) {
+          <span class="spinner spinner--light"></span>
+          Resetting…
+        } @else {
+          Reset demo data
+        }
+      </button>
+    </div>
+  </div>
+</dialog>

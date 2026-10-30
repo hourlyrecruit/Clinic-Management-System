@@ -35,6 +35,7 @@ export const SERVICES: readonly Service[] = [
       'A thorough, unhurried exam with digital X-rays, a gentle clean and a clear plan for what — if anything — needs attention next.',
     icon: 'shield',
     duration: '45 min',
+    durationMinutes: 45,
     fromPrice: '$95',
     highlights: ['Digital low-dose X-rays', 'Same-visit treatment plan'],
   },
@@ -46,6 +47,7 @@ export const SERVICES: readonly Service[] = [
       'Straighten your smile discreetly with a plan built around your bite. Includes 3D scanning, retainers and monthly check-ins.',
     icon: 'align',
     duration: '30 min scan',
+    durationMinutes: 30,
     fromPrice: '$2,900',
     highlights: ['3D digital scan', '0% financing available'],
     featured: true,
@@ -58,6 +60,7 @@ export const SERVICES: readonly Service[] = [
       'In-studio whitening with desensitising care, plus custom take-home trays so the shade you leave with is the shade you keep.',
     icon: 'sparkles',
     duration: '60 min',
+    durationMinutes: 60,
     fromPrice: '$420',
     highlights: ['Sensitivity-safe formula', 'Custom take-home trays'],
   },
@@ -69,6 +72,7 @@ export const SERVICES: readonly Service[] = [
       'A considered approach to reshaping chipped, worn or uneven teeth — from digital preview through to final bonding.',
     icon: 'tooth',
     duration: '2 visits',
+    durationMinutes: 45,
     fromPrice: '$850 / tooth',
     highlights: ['Digital smile preview', 'Hand-layered porcelain'],
   },
@@ -80,6 +84,7 @@ export const SERVICES: readonly Service[] = [
       'Guided implant placement with 3D planning, followed by a custom crown crafted to blend with your neighbouring teeth.',
     icon: 'implant',
     duration: '3–6 months',
+    durationMinutes: 60,
     fromPrice: '$2,400',
     highlights: ['Guided 3D placement', 'Single-tooth or full-arch'],
   },
@@ -91,6 +96,7 @@ export const SERVICES: readonly Service[] = [
       'A calm introduction to dental care with plenty of explanation, positive reinforcement and absolutely no surprises.',
     icon: 'smile',
     duration: '40 min',
+    durationMinutes: 40,
     fromPrice: '$75',
     highlights: ['Ages 2 and up', 'Built-in fun first'],
   },
@@ -106,6 +112,7 @@ export const DENTISTS: readonly Dentist[] = [
     image: 'images/dentist-ada.jpg',
     availability: 'Next opening: this week',
     years: 14,
+    email: 'ada@luminadental.studio',
   },
   {
     id: 'maya',
@@ -116,6 +123,7 @@ export const DENTISTS: readonly Dentist[] = [
     image: 'images/dentist-maya.jpg',
     availability: 'Next opening: within 3 days',
     years: 11,
+    email: 'maya@luminadental.studio',
   },
   {
     id: 'daniel',
@@ -126,6 +134,7 @@ export const DENTISTS: readonly Dentist[] = [
     image: 'images/dentist-daniel.jpg',
     availability: 'Next opening: tomorrow',
     years: 9,
+    email: 'daniel@luminadental.studio',
   },
 ] as const;
 
@@ -207,10 +216,50 @@ export const QUICK_TOPICS: readonly string[] = [
   'Insurance & pricing',
 ] as const;
 
+export interface ScheduleBlock {
+  /** JavaScript weekday numbers, 0 = Sunday. */
+  readonly days: readonly number[];
+  readonly start: string;
+  readonly end: string;
+}
+
+/** Weekly demo rota. Appointments must fit entirely inside one block. */
+export const DOCTOR_SCHEDULES: Readonly<Record<string, readonly ScheduleBlock[]>> = {
+  ada: [
+    { days: [1, 2, 3, 4], start: '09:00', end: '17:00' },
+    { days: [5], start: '09:00', end: '15:00' },
+  ],
+  maya: [
+    { days: [1, 3, 5], start: '09:00', end: '16:00' },
+    { days: [2], start: '10:00', end: '18:00' },
+  ],
+  daniel: [
+    { days: [2, 3, 4, 5], start: '08:30', end: '16:30' },
+    { days: [6], start: '09:00', end: '13:00' },
+  ],
+};
+
+export const SLOT_INTERVAL_MINUTES = 30;
+
 export function serviceById(id: string): Service | undefined {
   return SERVICES.find((service) => service.id === id);
 }
 
 export function dentistById(id: string): Dentist | undefined {
   return DENTISTS.find((dentist) => dentist.id === id);
+}
+
+export function scheduleFor(doctorId: string, isoDate: string): ScheduleBlock | undefined {
+  const weekday = new Date(`${isoDate}T12:00:00`).getDay();
+  return DOCTOR_SCHEDULES[doctorId]?.find((block) => block.days.includes(weekday));
+}
+
+export function doctorWorkingDays(doctorId: string): string {
+  const labels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const days = new Set<number>();
+  DOCTOR_SCHEDULES[doctorId]?.forEach((block) => block.days.forEach((day) => days.add(day)));
+  return [...days]
+    .sort((a, b) => a - b)
+    .map((day) => labels[day])
+    .join(' · ');
 }

@@ -75,6 +75,50 @@ import { IconName } from '../core/models';
         @case ('arrow-up-right') {
           <path d="M7 17 17 7M8 7h9v9" />
         }
+        @case ('arrow-left') {
+          <path d="M19.5 12h-15M10.5 6l-6 6 6 6" />
+        }
+        @case ('check-circle') {
+          <circle cx="12" cy="12" r="9" />
+          <path d="m8 12.2 2.7 2.7L16.2 9" />
+        }
+        @case ('dashboard') {
+          <rect x="3.5" y="3.5" width="7.5" height="7.5" rx="2" />
+          <rect x="13" y="3.5" width="7.5" height="7.5" rx="2" />
+          <rect x="3.5" y="13" width="7.5" height="7.5" rx="2" />
+          <rect x="13" y="13" width="7.5" height="7.5" rx="2" />
+        }
+        @case ('plus') {
+          <path d="M12 5v14M5 12h14" />
+        }
+        @case ('edit') {
+          <path d="M4 20h4l10.5-10.5a2.8 2.8 0 0 0-4-4L4 16v4Z" />
+          <path d="m13.5 6.5 4 4" />
+        }
+        @case ('refresh') {
+          <path d="M20 11a8 8 0 1 0-2.3 6.3" />
+          <path d="M20 4.5V11h-6.5" />
+        }
+        @case ('log-out') {
+          <path d="M9.5 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h3.5" />
+          <path d="M15.5 8l4 4-4 4M19.5 12H9" />
+        }
+        @case ('stethoscope') {
+          <path d="M5 3v5a4 4 0 0 0 8 0V3" />
+          <path d="M4 3h2M12 3h2" />
+          <path d="M9 12v2a5 5 0 0 0 10 0v-2" />
+          <circle cx="19" cy="9.5" r="2" />
+        }
+        @case ('eye') {
+          <path d="M2.5 12S6 5.8 12 5.8 21.5 12 21.5 12 18 18.2 12 18.2 2.5 12 2.5 12Z" />
+          <circle cx="12" cy="12" r="3" />
+        }
+        @case ('eye-off') {
+          <path d="M4 4l16 16" />
+          <path d="M9.9 5.9A9.9 9.9 0 0 1 12 5.8c6 0 9.5 6.2 9.5 6.2a16 16 0 0 1-2.7 3.4" />
+          <path d="M6.1 7.6A16.4 16.4 0 0 0 2.5 12S6 18.2 12 18.2a9.5 9.5 0 0 0 3.5-.7" />
+          <path d="M10.2 10.3a2.9 2.9 0 0 0 3.6 4" />
+        }
         @case ('chat') {
           <path
             d="M20.5 11.8a8.2 8.2 0 0 1-8.2 8.2H7.4L3.5 22.5v-10.7a8.2 8.2 0 0 1 8.2-8.2h.6a8.2 8.2 0 0 1 8.2 8.2Z"

@@ -1,0 +1,589 @@
+<div class="wiz" #wizardTop>
+  @if (confirmed(); as appointment) {
+    <section class="wiz-confirm" aria-labelledby="wiz-confirm-title">
+      <span class="wiz-confirm__mark"><app-icon name="check" [size]="34" /></span>
+      <span class="eyebrow eyebrow--plain">Appointment requested</span>
+      <h2 id="wiz-confirm-title">You're on the books.</h2>
+      <p class="wiz-confirm__lead">
+        A demo reference has been created and the visit now appears in the clinic diary. Nothing
+        was emailed or sent to a real clinic.
+      </p>
+
+      <div class="wiz-confirm__ref">
+        <span>Reference</span>
+        <strong>{{ appointment.reference }}</strong>
+      </div>
+
+      <dl class="wiz-confirm__facts">
+        <div>
+          <dt>Patient</dt>
+          <dd>{{ appointment.patientName }}</dd>
+        </div>
+        <div>
+          <dt>Clinician</dt>
+          <dd>{{ doctorName(appointment.doctorId) }}</dd>
+        </div>
+        <div>
+          <dt>Treatment</dt>
+          <dd>{{ serviceName(appointment.serviceId) }}</dd>
+        </div>
+        <div>
+          <dt>When</dt>
+          <dd>
+            {{ dateLabel(appointment.appointmentDate) }}<br />
+            {{ timeLabel(appointment.startTime) }} – {{ timeLabel(appointment.endTime) }}
+          </dd>
+        </div>
+      </dl>
+
+      <div class="wiz-confirm__notice">
+        <app-icon name="shield" [size]="16" />
+        <span>
+          Saved in this browser only. The appointment is <strong>pending confirmation</strong> by
+          the front desk — it is not a real-world booking.
+        </span>
+      </div>
+
+      <div class="wiz-confirm__actions">
+        @if (isStaff()) {
+          <a class="btn btn--primary" routerLink="/receptionist/appointments">
+            Back to appointments
+            <app-icon name="arrow-right" [size]="16" />
+          </a>
+          <button type="button" class="btn btn--outline" (click)="reset()">
+            Book another patient
+          </button>
+        } @else {
+          <a class="btn btn--primary" routerLink="/patient/dashboard">
+            Go to my dashboard
+            <app-icon name="arrow-right" [size]="16" />
+          </a>
+          <a class="btn btn--outline" routerLink="/patient/appointments">View appointments</a>
+        }
+      </div>
+    </section>
+  } @else {
+    <div class="wiz-head">
+      <div>
+        <span class="eyebrow">{{ isStaff() ? 'Front desk booking' : 'Book a visit' }}</span>
+        <h2 class="wiz-title">
+          @if (isStaff()) {
+            Booking for <em>{{ effectivePatient()?.name }}</em>
+          } @else {
+            Your next visit, <em>your way.</em>
+          }
+        </h2>
+        <p class="wiz-lead">
+          @if (isStaff()) {
+            The appointment belongs to the selected patient. Your reception account is recorded as
+            the creator.
+          } @else {
+            Five short steps. Your place is held only once you confirm.
+          }
+        </p>
+      </div>
+
+      @if (effectivePatient(); as account) {
+        <div class="wiz-patient">
+          <span class="wiz-patient__avatar">{{ initials() }}</span>
+          <span class="wiz-patient__text">
+            <strong>{{ account.name }}</strong>
+            <small>{{ account.email }}</small>
+          </span>
+          <span class="wiz-patient__tag">{{ isStaff() ? 'Selected patient' : 'Your account' }}</span>
+        </div>
+      }
+    </div>
+
+    <ol class="wiz-steps" aria-label="Booking steps">
+      @for (item of steps; track item.number) {
+        <li
+          class="wiz-step"
+          [class.is-active]="step() === item.number"
+          [class.is-done]="step() > item.number"
+          [attr.aria-current]="step() === item.number ? 'step' : null"
+        >
+          <span class="wiz-step__num">
+            @if (step() > item.number) {
+              <app-icon name="check" [size]="13" />
+            } @else {
+              {{ item.number }}
+            }
+          </span>
+          <span class="wiz-step__label">{{ item.label }}</span>
+        </li>
+      }
+    </ol>
+
+    <div class="wiz-layout">
+      <section class="wiz-card" aria-label="Appointment booking">
+        <div class="wiz-body" aria-live="polite">
+          @switch (step()) {
+            @case (1) {
+              <div class="wiz-panel">
+                <div class="wiz-panel__head">
+                  <span class="wiz-panel__index">Step 1 of 5</span>
+                  <h3>What brings you in?</h3>
+                  <p>Choose the closest treatment. We can adjust it on the day.</p>
+                </div>
+
+                <div class="wiz-choices wiz-choices--services">
+                  @for (service of services; track service.id) {
+                    <button
+                      type="button"
+                      class="wiz-choice"
+                      [class.is-selected]="selectedService() === service.id"
+                      [attr.aria-pressed]="selectedService() === service.id"
+                      (click)="selectService(service.id)"
+                    >
+                      <span class="wiz-choice__icon">
+                        <app-icon [name]="service.icon" [size]="20" />
+                      </span>
+                      <span class="wiz-choice__body">
+                        <span class="wiz-choice__title">
+                          {{ service.name }}
+                          @if (service.featured) {
+                            <span class="wiz-choice__tag">Popular</span>
+                          }
+                        </span>
+                        <span class="wiz-choice__text">{{ service.summary }}</span>
+                        <span class="wiz-choice__meta">
+                          {{ service.duration }} · guide from {{ service.fromPrice }}
+                        </span>
+                      </span>
+                      <span class="wiz-choice__check">
+                        <app-icon name="check" [size]="12" />
+                      </span>
+                    </button>
+                  }
+                </div>
+                <p class="wiz-fineprint">
+                  Prices are illustrative demo figures, not a quote. We confirm costs before any
+                  treatment.
+                </p>
+              </div>
+            }
+
+            @case (2) {
+              <div class="wiz-panel">
+                <div class="wiz-panel__head">
+                  <span class="wiz-panel__index">Step 2 of 5</span>
+                  <h3>Who would you like to see?</h3>
+                  <p>Each clinician keeps their own diary, shown in the next step.</p>
+                </div>
+
+                <div class="wiz-choices wiz-choices--doctors">
+                  @for (doctor of dentists; track doctor.id) {
+                    <button
+                      type="button"
+                      class="wiz-choice wiz-choice--doctor"
+                      [class.is-selected]="selectedDoctor() === doctor.id"
+                      [attr.aria-pressed]="selectedDoctor() === doctor.id"
+                      (click)="selectDoctor(doctor.id)"
+                    >
+                      <img
+                        class="wiz-choice__photo"
+                        [src]="doctor.image"
+                        [alt]="doctor.name"
+                        width="56"
+                        height="56"
+                      />
+                      <span class="wiz-choice__body">
+                        <span class="wiz-choice__title">{{ doctor.name }}</span>
+                        <span class="wiz-choice__role">{{ doctor.role }}</span>
+                        <span class="wiz-choice__text">{{ doctor.bio }}</span>
+                        <span class="wiz-choice__meta">
+                          {{ doctor.focus[0] }} · {{ doctor.focus[1] }} · works
+                          {{ workingDays(doctor.id) }}
+                        </span>
+                      </span>
+                      <span class="wiz-choice__check">
+                        <app-icon name="check" [size]="12" />
+                      </span>
+                    </button>
+                  }
+                </div>
+              </div>
+            }
+
+            @case (3) {
+              <div class="wiz-panel">
+                <div class="wiz-panel__head">
+                  <span class="wiz-panel__index">Step 3 of 5</span>
+                  <h3>Pick a day and time.</h3>
+                  <p>
+                    {{ doctorName(selectedDoctor()) }} · {{ selectedServiceData()?.name }} ·
+                    {{ durationLabel() }}
+                  </p>
+                </div>
+
+                <div class="wiz-fieldset">
+                  <span class="wiz-legend">Next available days</span>
+                  <div class="wiz-dates">
+                    @for (date of days(); track date) {
+                      <button
+                        type="button"
+                        class="wiz-date"
+                        [class.is-selected]="selectedDate() === date"
+                        [class.is-full]="slotCount(date) === 0"
+                        [disabled]="slotCount(date) === 0"
+                        [attr.aria-pressed]="selectedDate() === date"
+                        [attr.aria-label]="
+                          relative(date) + ', ' + slotCount(date) + ' slots available'
+                        "
+                        (click)="selectDate(date)"
+                      >
+                        <span class="wiz-date__day">{{ dayParts(date).weekday }}</span>
+                        <span class="wiz-date__num">{{ dayParts(date).day }}</span>
+                        <span class="wiz-date__month">{{ dayParts(date).month }}</span>
+                        <span class="wiz-date__slots">
+                          {{ slotCount(date) === 0 ? 'Full' : slotCount(date) + ' free' }}
+                        </span>
+                      </button>
+                    }
+                  </div>
+                </div>
+
+                <div class="wiz-fieldset">
+                  <span class="wiz-legend">
+                    Available times
+                    @if (selectedDate()) {
+                      <span class="wiz-legend__hint">{{ dateLabel(selectedDate()!) }}</span>
+                    }
+                  </span>
+
+                  @if (selectedDate()) {
+                    <div class="wiz-slots">
+                      @for (slot of slotsFor(selectedDate()!); track slot.startTime) {
+                        <button
+                          type="button"
+                          class="wiz-slot"
+                          [class.is-selected]="selectedTime() === slot.startTime"
+                          [class.is-disabled]="!slot.available"
+                          [disabled]="!slot.available"
+                          [attr.aria-pressed]="selectedTime() === slot.startTime"
+                          (click)="selectTime(slot.startTime)"
+                        >
+                          {{ timeLabel(slot.startTime) }}
+                        </button>
+                      }
+                    </div>
+                    @if (slotCount(selectedDate()!) === 0) {
+                      <p class="wiz-slot-empty">
+                        <app-icon name="alert" [size]="15" />
+                        This day is full. Choose another day above.
+                      </p>
+                    }
+                    <p class="wiz-legend-row">
+                      <span><span class="wiz-dot"></span> Available</span>
+                      <span><span class="wiz-dot wiz-dot--off"></span> Booked or past</span>
+                    </p>
+                  } @else {
+                    <p class="wiz-slot-prompt">
+                      <app-icon name="calendar" [size]="16" />
+                      Choose a day to see its times.
+                    </p>
+                  }
+                </div>
+              </div>
+            }
+
+            @case (4) {
+              <div class="wiz-panel">
+                <div class="wiz-panel__head">
+                  <span class="wiz-panel__index">Step 4 of 5</span>
+                  <h3>Who should we expect?</h3>
+                  <p>
+                    @if (isStaff()) {
+                      Contact details are stored on this booking, not changed on the patient's
+                      account.
+                    } @else {
+                      We prefilled these from your account. Editing them here does not change your
+                      profile.
+                    }
+                  </p>
+                </div>
+
+                <form [formGroup]="details" (ngSubmit)="next()" novalidate>
+                  <div class="wiz-form-grid">
+                    <div class="field">
+                      <label for="wiz-name">Full name</label>
+                      <input
+                        id="wiz-name"
+                        class="input"
+                        type="text"
+                        formControlName="patientName"
+                        autocomplete="name"
+                        [attr.aria-invalid]="
+                          submitted() && details.controls.patientName.invalid ? 'true' : null
+                        "
+                      />
+                      @if (
+                        submitted() &&
+                        details.controls.patientName.touched &&
+                        details.controls.patientName.invalid
+                      ) {
+                        <p class="error-text">Enter the patient's full name.</p>
+                      }
+                    </div>
+
+                    <div class="field">
+                      <label for="wiz-phone">Phone</label>
+                      <input
+                        id="wiz-phone"
+                        class="input"
+                        type="tel"
+                        formControlName="phone"
+                        autocomplete="tel"
+                        [attr.aria-invalid]="
+                          submitted() && details.controls.phone.invalid ? 'true' : null
+                        "
+                      />
+                      @if (
+                        submitted() &&
+                        details.controls.phone.touched &&
+                        details.controls.phone.invalid
+                      ) {
+                        <p class="error-text">Enter a contact number.</p>
+                      }
+                    </div>
+                  </div>
+
+                  <div class="field">
+                    <label for="wiz-email">Email</label>
+                    <input
+                      id="wiz-email"
+                      class="input"
+                      type="email"
+                      formControlName="email"
+                      autocomplete="email"
+                      [attr.aria-invalid]="
+                        submitted() && details.controls.email.invalid ? 'true' : null
+                      "
+                    />
+                    @if (
+                      submitted() &&
+                      details.controls.email.touched &&
+                      details.controls.email.invalid
+                    ) {
+                      <p class="error-text">Enter a valid email for the demo record.</p>
+                    }
+                  </div>
+
+                  <div class="field">
+                    <label for="wiz-reason">
+                      Reason for visit <span class="hint-text">(optional)</span>
+                    </label>
+                    <textarea
+                      id="wiz-reason"
+                      class="textarea"
+                      formControlName="reason"
+                      placeholder="Nerves, accessibility needs, a specific tooth, previous treatment…"
+                    ></textarea>
+                  </div>
+
+                  <label class="checkbox">
+                    <input type="checkbox" formControlName="consent" />
+                    <span>
+                      @if (isStaff()) {
+                        The patient has agreed to the 24-hour cancellation policy and to being
+                        contacted about this appointment.
+                      } @else {
+                        I agree to the 24-hour cancellation policy and understand this is a demo
+                        booking stored in my browser.
+                      }
+                    </span>
+                  </label>
+                  @if (
+                    submitted() &&
+                    details.controls.consent.touched &&
+                    details.controls.consent.invalid
+                  ) {
+                    <p class="error-text">Please accept the cancellation policy.</p>
+                  }
+                </form>
+              </div>
+            }
+
+            @case (5) {
+              <div class="wiz-panel">
+                <div class="wiz-panel__head">
+                  <span class="wiz-panel__index">Step 5 of 5</span>
+                  <h3>Review and confirm.</h3>
+                  <p>We recheck the slot when you confirm, so nothing can double-book.</p>
+                </div>
+
+                <div class="wiz-review">
+                  <div class="wiz-review__row">
+                    <div>
+                      <span class="wiz-review__label">Treatment</span>
+                      <strong>{{ selectedServiceData()?.name }}</strong>
+                      <small>{{ durationLabel() }} · guide from {{ selectedServiceData()?.fromPrice }}</small>
+                    </div>
+                    <button type="button" class="db-link" (click)="goTo(1)">Edit</button>
+                  </div>
+                  <div class="wiz-review__row">
+                    <div>
+                      <span class="wiz-review__label">Clinician</span>
+                      <strong>{{ doctorName(selectedDoctor()) }}</strong>
+                      <small>{{ selectedDoctorData()?.role }}</small>
+                    </div>
+                    <button type="button" class="db-link" (click)="goTo(2)">Edit</button>
+                  </div>
+                  <div class="wiz-review__row">
+                    <div>
+                      <span class="wiz-review__label">Date & time</span>
+                      <strong>{{ summaryDate() }}</strong>
+                      <small>{{ summaryTime() }} – {{ summaryEnd() }}</small>
+                    </div>
+                    <button type="button" class="db-link" (click)="goTo(3)">Edit</button>
+                  </div>
+                  <div class="wiz-review__row">
+                    <div>
+                      <span class="wiz-review__label">Patient</span>
+                      <strong>{{ details.controls.patientName.value }}</strong>
+                      <small>
+                        {{ details.controls.email.value }} ·
+                        {{ details.controls.phone.value }}
+                      </small>
+                    </div>
+                    <button type="button" class="db-link" (click)="goTo(4)">Edit</button>
+                  </div>
+                  @if (details.controls.reason.value) {
+                    <div class="wiz-review__row">
+                      <div>
+                        <span class="wiz-review__label">Reason for visit</span>
+                        <p class="wiz-review__reason">{{ details.controls.reason.value }}</p>
+                      </div>
+                    </div>
+                  }
+                </div>
+
+                @if (isStaff()) {
+                  <p class="db-notice db-notice--teal">
+                    <app-icon name="users" [size]="16" />
+                    Recorded as booked by {{ effectiveCreator()?.name }} (reception). The patient
+                    will see this in their own dashboard.
+                  </p>
+                } @else {
+                  <p class="db-notice">
+                    <app-icon name="shield" [size]="16" />
+                    Demo booking only: no email, SMS or clinic system is contacted. Reference and
+                    records stay in this browser.
+                  </p>
+                }
+              </div>
+            }
+          }
+
+          @if (error()) {
+            <p class="wiz-error" role="alert">
+              <app-icon name="alert" [size]="16" />
+              {{ error() }}
+            </p>
+          }
+        </div>
+
+        <div class="wiz-foot">
+          @if (step() > 1) {
+            <button type="button" class="btn btn--outline" (click)="back()" [disabled]="submitting()">
+              <app-icon name="arrow-left" [size]="15" />
+              Back
+            </button>
+          } @else {
+            <span class="wiz-foot__hint">
+              <app-icon name="clock" [size]="14" />
+              About a minute
+            </span>
+          }
+
+          <span class="wiz-foot__spacer"></span>
+
+          @if (step() < 5) {
+            <button
+              type="button"
+              class="btn btn--primary"
+              [disabled]="(step() < 4 && !canContinue()) || submitting()"
+              (click)="next()"
+            >
+              Continue
+              <app-icon name="arrow-right" [size]="15" />
+            </button>
+          } @else {
+            <button
+              type="button"
+              class="btn btn--primary"
+              [disabled]="submitting()"
+              (click)="confirm()"
+            >
+              @if (submitting()) {
+                <span class="spinner spinner--light"></span>
+                Checking the diary…
+              } @else {
+                Confirm appointment
+                <app-icon name="check" [size]="16" />
+              }
+            </button>
+          }
+        </div>
+      </section>
+
+      <aside class="wiz-summary" aria-label="Booking summary">
+        <div class="wiz-summary__card">
+          <span class="eyebrow">Your visit</span>
+
+          @if (selectedTime()) {
+            <div class="wiz-summary__when">
+              <strong>{{ summaryTime() }}</strong>
+              <span>{{ summaryDate() }}</span>
+              <small>{{ summaryTime() }} – {{ summaryEnd() }}</small>
+            </div>
+          }
+
+          <dl class="wiz-summary__list">
+            <div>
+              <dt>Treatment</dt>
+              <dd>{{ selectedServiceData()?.name ?? 'Not selected' }}</dd>
+            </div>
+            <div>
+              <dt>Clinician</dt>
+              <dd>{{ doctorName(selectedDoctor()) }}</dd>
+            </div>
+            <div>
+              <dt>Patient</dt>
+              <dd>{{ effectivePatient()?.name ?? 'Not selected' }}</dd>
+            </div>
+            <div>
+              <dt>Duration</dt>
+              <dd>{{ durationLabel() || '—' }}</dd>
+            </div>
+          </dl>
+
+          <div class="wiz-summary__price">
+            <span>Guide price</span>
+            <strong>{{ selectedServiceData()?.fromPrice ?? '—' }}</strong>
+          </div>
+
+          <ul class="wiz-summary__assurances">
+            <li><app-icon name="check" [size]="12" /> Free cancellation up to 24h</li>
+            <li><app-icon name="check" [size]="12" /> Written estimate before treatment</li>
+            <li><app-icon name="check" [size]="12" /> Same clinician throughout</li>
+          </ul>
+        </div>
+
+        <div class="wiz-summary__help">
+          <span class="wiz-summary__help-icon"><app-icon name="phone" [size]="17" /></span>
+          <div>
+            <strong>Prefer to talk?</strong>
+            <p>Call reception on (503) 555-0142.</p>
+          </div>
+        </div>
+
+        <p class="wiz-summary__demo">
+          <app-icon name="shield" [size]="14" />
+          Demo data only. No real appointment is created.
+        </p>
+      </aside>
+    </div>
+  }
+</div>

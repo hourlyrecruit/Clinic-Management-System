@@ -1,0 +1,166 @@
+<app-auth-shell
+  asideEyebrow="Join Lumina"
+  asideTitle="A calmer relationship with your teeth."
+  asideText="Create a demo patient account to book visits, keep your history together and see exactly where things stand — no phone calls needed."
+  [asidePoints]="[
+    'Book and review visits in one place',
+    'Prefilled details on every booking',
+    'Your data stays in this browser'
+  ]"
+  image="images/hero-treatment.jpg"
+  quote="Our daughter was nervous and Daniel sat on the floor with her for ten minutes. She now asks when we are going back."
+  quoteAuthor="Marcus L. · family dentistry patient"
+>
+  <section class="auth-card" aria-labelledby="signup-title">
+    <span class="eyebrow">Patient registration</span>
+    <h1 id="signup-title" class="auth-card__title">Create your <em>patient account.</em></h1>
+    <p class="auth-card__lead">
+      Takes about a minute. This creates a patient account only — staff accounts are fixed demo
+      logins.
+    </p>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <div class="field">
+        <label for="signup-name">Full name</label>
+        <input
+          id="signup-name"
+          class="input"
+          type="text"
+          formControlName="name"
+          autocomplete="name"
+          placeholder="Jamie Rivera"
+          [attr.aria-invalid]="submitted() && form.controls.name.invalid ? 'true' : null"
+        />
+        @if (submitted() && form.controls.name.touched && form.controls.name.invalid) {
+          <p class="error-text">Enter your full name (at least two characters).</p>
+        }
+      </div>
+
+      <div class="field">
+        <label for="signup-email">Email address</label>
+        <input
+          id="signup-email"
+          class="input"
+          type="email"
+          formControlName="email"
+          autocomplete="email"
+          placeholder="you@example.com"
+          [attr.aria-invalid]="submitted() && form.controls.email.invalid ? 'true' : null"
+        />
+        @if (submitted() && form.controls.email.touched && form.controls.email.invalid) {
+          <p class="error-text">
+            @if (form.controls.email.hasError('required')) {
+              Enter your email address.
+            } @else if (form.controls.email.hasError('taken')) {
+              This email already has an account. <a routerLink="/signin">Sign in instead</a>.
+            } @else {
+              Enter a valid email address.
+            }
+          </p>
+        }
+      </div>
+
+      <div class="field">
+        <label for="signup-phone">Phone number</label>
+        <input
+          id="signup-phone"
+          class="input"
+          type="tel"
+          formControlName="phone"
+          autocomplete="tel"
+          placeholder="(503) 555-0100"
+          [attr.aria-invalid]="submitted() && form.controls.phone.invalid ? 'true' : null"
+        />
+        @if (submitted() && form.controls.phone.touched && form.controls.phone.invalid) {
+          <p class="error-text">Enter a phone number we can reach you on.</p>
+        }
+      </div>
+
+      <div class="field">
+        <label for="signup-password">Password</label>
+        <div class="password-field">
+          <input
+            id="signup-password"
+            class="input"
+            [type]="showPassword() ? 'text' : 'password'"
+            formControlName="password"
+            autocomplete="new-password"
+            placeholder="Create a demo password"
+            [attr.aria-invalid]="submitted() && form.controls.password.invalid ? 'true' : null"
+          />
+          <button
+            type="button"
+            class="password-toggle"
+            [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'"
+            [attr.aria-pressed]="showPassword()"
+            (click)="togglePassword()"
+          >
+            <app-icon [name]="showPassword() ? 'eye-off' : 'eye'" [size]="17" />
+          </button>
+        </div>
+        <ul class="rule-list" aria-label="Password requirements">
+          @for (rule of passwordRules(); track rule.label) {
+            <li [class.is-met]="rule.met">
+              <span class="rule-list__dot"><app-icon name="check" [size]="9" /></span>
+              {{ rule.label }}
+            </li>
+          }
+        </ul>
+      </div>
+
+      <div class="field">
+        <label for="signup-confirm">Confirm password</label>
+        <input
+          id="signup-confirm"
+          class="input"
+          [type]="showPassword() ? 'text' : 'password'"
+          formControlName="confirmPassword"
+          autocomplete="new-password"
+          placeholder="Repeat your password"
+          [attr.aria-invalid]="
+            submitted() && form.hasError('mismatch') ? 'true' : null
+          "
+        />
+        @if (submitted() && form.controls.confirmPassword.touched && form.hasError('mismatch')) {
+          <p class="error-text">The two passwords do not match.</p>
+        }
+      </div>
+
+      <label class="checkbox">
+        <input type="checkbox" formControlName="terms" />
+        <span>
+          I agree to the demonstration terms and privacy policy, and understand this account is
+          stored only in this browser.
+        </span>
+      </label>
+      @if (submitted() && form.controls.terms.touched && form.controls.terms.invalid) {
+        <p class="error-text">Please accept the terms to continue.</p>
+      }
+
+      @if (error()) {
+        <p class="auth-alert auth-alert--error" role="alert">
+          <app-icon name="alert" [size]="16" />
+          {{ error() }}
+        </p>
+      }
+
+      <button type="submit" class="btn btn--primary btn--block" [disabled]="loading()">
+        @if (loading()) {
+          <span class="spinner spinner--light"></span>
+          Creating account…
+        } @else {
+          Create patient account
+          <app-icon name="arrow-right" [size]="16" />
+        }
+      </button>
+    </form>
+
+    <p class="auth-switch">Already registered? <a routerLink="/signin">Sign in</a></p>
+
+    <p class="auth-fineprint">
+      Passwords are hashed with PBKDF2 in this browser so no plaintext is stored. That is not the
+      same as server-side password protection — this is a frontend demo, so please use a throwaway
+      password.
+    </p>
+  </section>
+</app-auth-shell>

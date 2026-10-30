@@ -21,10 +21,28 @@
         <app-icon name="phone" [size]="15" />
         <span>{{ clinic.phoneDisplay }}</span>
       </a>
-      <a class="btn btn--primary btn--sm header-book" routerLink="/book">
-        Book a visit
-        <app-icon name="arrow-up-right" [size]="14" />
-      </a>
+
+      @if (user(); as account) {
+        <a class="header-account" [routerLink]="dashboardPath()" [attr.aria-label]="dashboardLabel() + ' for ' + account.name">
+          <span class="header-account__avatar">{{ initials() }}</span>
+          <span class="header-account__text">
+            <strong>{{ account.name }}</strong>
+            <small>{{ dashboardLabel() }}</small>
+          </span>
+        </a>
+        @if (account.role !== 'DOCTOR') {
+          <a class="btn btn--primary btn--sm header-book" [routerLink]="primaryPath()">
+            {{ primaryLabel() }}
+            <app-icon name="arrow-up-right" [size]="14" />
+          </a>
+        }
+      } @else {
+        <a class="header-signin" routerLink="/signin">Sign in</a>
+        <a class="btn btn--primary btn--sm header-book" routerLink="/book">
+          Book a visit
+          <app-icon name="arrow-up-right" [size]="14" />
+        </a>
+      }
       <button
         type="button"
         class="menu-toggle"
@@ -49,9 +67,23 @@
         }
       </nav>
       <div class="mobile-menu__actions">
-        <a class="btn btn--primary btn--block" routerLink="/book" (click)="closeMenu()">
-          Book an appointment
-        </a>
+        @if (user()) {
+          <a class="btn btn--primary btn--block" [routerLink]="dashboardPath()" (click)="closeMenu()">
+            {{ dashboardLabel() }}
+          </a>
+          @if (auth.currentUser()?.role !== 'DOCTOR') {
+            <a class="btn btn--outline btn--block" [routerLink]="primaryPath()" (click)="closeMenu()">
+              {{ primaryLabel() }}
+            </a>
+          }
+        } @else {
+          <a class="btn btn--primary btn--block" routerLink="/book" (click)="closeMenu()">
+            Book an appointment
+          </a>
+          <a class="btn btn--outline btn--block" routerLink="/signin" (click)="closeMenu()">
+            Sign in
+          </a>
+        }
         <a class="btn btn--outline btn--block" [href]="clinic.phoneHref">
           <app-icon name="phone" [size]="16" />
           {{ clinic.phoneDisplay }}

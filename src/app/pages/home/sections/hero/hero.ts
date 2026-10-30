@@ -1,16 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, inject, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { CLINIC, DENTISTS, TIME_SLOTS } from '../../../../core/clinic-data';
+import { CLINIC, DENTISTS } from '../../../../core/clinic-data';
 import { ClinicStore } from '../../../../core/clinic-store';
-import {
-  addDays,
-  formatTime,
-  isClosed,
-  isPastSlot,
-  relativeDay,
-  slotsForDate,
-  todayIso,
-} from '../../../../core/date.utils';
+import { addDays, formatTime, relativeDay, todayIso } from '../../../../core/date.utils';
 import { RevealDirective } from '../../../../core/reveal.directive';
 import { Icon } from '../../../../shared/icon';
 
@@ -38,15 +30,12 @@ export class HeroSection {
     const today = todayIso();
     for (let offset = 0; offset < 14; offset++) {
       const date = addDays(today, offset);
-      if (isClosed(date)) {
-        continue;
-      }
-      for (const slot of slotsForDate(date, TIME_SLOTS)) {
-        if (isPastSlot(date, slot)) {
-          continue;
-        }
-        if (this.store.hasOpenSlot(date, slot)) {
-          return { day: relativeDay(date), time: formatTime(slot) };
+      for (const dentist of DENTISTS) {
+        const slot = this.store
+          .availableSlots(dentist.id, date, 'preventive')
+          .find((item) => item.available);
+        if (slot) {
+          return { day: relativeDay(date), time: formatTime(slot.startTime) };
         }
       }
     }

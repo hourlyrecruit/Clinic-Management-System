@@ -1,0 +1,103 @@
+<dialog
+  #dialog
+  class="db-modal"
+  aria-labelledby="reschedule-title"
+  (cancel)="close($event)"
+  (click)="onBackdrop($event)"
+>
+  @if (appointment(); as item) {
+    <div class="db-modal__head">
+      <div>
+        <h2 id="reschedule-title">Reschedule appointment</h2>
+        <p>{{ serviceName(item.serviceId) }} · {{ item.patientName }}</p>
+      </div>
+      <button type="button" class="db-icon-btn" aria-label="Close" (click)="close()">
+        <app-icon name="close" [size]="17" />
+      </button>
+    </div>
+
+    <div class="db-modal__section resched__current">
+      <div>
+        <span class="resched__label">Currently</span>
+        <strong>{{ dateLabel(item.appointmentDate) }}</strong>
+        <span>{{ time(item.startTime) }} – {{ time(item.endTime) }} with {{ doctorName(item.doctorId) }}</span>
+      </div>
+      <span class="resched__ref">Ref {{ item.reference }}</span>
+    </div>
+
+    <div class="db-modal__section">
+      <h3>New date</h3>
+      <div class="resched__dates">
+        @for (date of days(); track date) {
+          <button
+            type="button"
+            class="resched__date"
+            [class.is-selected]="selectedDate() === date"
+            [attr.aria-pressed]="selectedDate() === date"
+            (click)="selectDate(date)"
+          >
+            <span>{{ dayParts(date).weekday }}</span>
+            <strong>{{ dayParts(date).day }}</strong>
+            <span>{{ dayParts(date).month }}</span>
+          </button>
+        }
+      </div>
+    </div>
+
+    <div class="db-modal__section">
+      <h3>
+        New time
+        @if (selectedDate()) {
+          <span class="resched__hint">{{ relative(selectedDate()!) }}</span>
+        }
+      </h3>
+
+      @if (selectedDate()) {
+        @if (slots().length) {
+          <div class="resched__slots">
+            @for (slot of slots(); track slot.startTime) {
+              <button
+                type="button"
+                class="resched__slot"
+                [class.is-selected]="selectedTime() === slot.startTime"
+                [class.is-disabled]="!slot.available"
+                [disabled]="!slot.available"
+                [attr.aria-pressed]="selectedTime() === slot.startTime"
+                (click)="selectTime(slot.startTime)"
+              >
+                {{ time(slot.startTime) }}
+              </button>
+            }
+          </div>
+        } @else {
+          <p class="resched__empty">No times on this day. Choose another date.</p>
+        }
+      } @else {
+        <p class="resched__empty">Choose a date to see available times.</p>
+      }
+    </div>
+
+    @if (error()) {
+      <div class="db-modal__section">
+        <p class="auth-alert auth-alert--error" role="alert">
+          <app-icon name="alert" [size]="16" />
+          {{ error() }}
+        </p>
+      </div>
+    }
+
+    <div class="db-modal__section resched__actions">
+      <button type="button" class="btn btn--outline btn--sm" (click)="close()" [disabled]="saving()">
+        Cancel
+      </button>
+      <button type="button" class="btn btn--primary btn--sm" (click)="save()" [disabled]="saving() || !selectedTime()">
+        @if (saving()) {
+          <span class="spinner spinner--light"></span>
+          Moving…
+        } @else {
+          Confirm new time
+        }
+      </button>
+    </div>
+  }
+</dialog>

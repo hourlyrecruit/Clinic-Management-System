@@ -1,0 +1,151 @@
+<section class="db-page">
+  <div class="db-page-head">
+    <div>
+      <span class="eyebrow">Clinician dashboard</span>
+      <h1>Your list, <em>Dr. {{ firstName() }}.</em></h1>
+      <p>{{ todayLabel }} · Only appointments assigned to you appear here. {{ doctor()?.role }}.</p>
+    </div>
+    <div class="db-actions">
+      <a class="btn btn--outline" routerLink="/doctor/appointments">
+        <app-icon name="calendar" [size]="15" />
+        Full schedule
+      </a>
+    </div>
+  </div>
+
+  <div class="db-stats db-stagger">
+    @for (stat of stats(); track stat.label) {
+      <article class="db-stat">
+        <div class="db-stat__top">
+          <span class="db-stat__label">{{ stat.label }}</span>
+          <span [class]="'db-stat__icon' + stat.tone">
+            <app-icon [name]="stat.icon" [size]="17" />
+          </span>
+        </div>
+        <strong class="db-stat__value">{{ stat.value }}</strong>
+        <span class="db-stat__hint">{{ stat.hint }}</span>
+      </article>
+    }
+  </div>
+
+  <div class="db-grid db-grid--split">
+    <section class="db-card">
+      <div class="db-card__head">
+        <div>
+          <h2>Today's clinic</h2>
+          <p>{{ todayAppointments().length }} appointments assigned to you</p>
+        </div>
+        <span class="doctor-day">{{ todayLabel }}</span>
+      </div>
+
+      @if (todayAppointments().length) {
+        <div class="doctor-list">
+          @for (item of todayAppointments(); track item.id) {
+            <article class="doctor-slot">
+              <div class="doctor-slot__time">
+                <strong>{{ time(item.startTime) }}</strong>
+                <span>{{ time(item.endTime) }}</span>
+              </div>
+              <div class="doctor-slot__main">
+                <div class="doctor-slot__title">
+                  <h3>{{ item.patientName }}</h3>
+                  <app-status-badge [status]="item.status" />
+                </div>
+                <p>{{ serviceName(item.serviceId) }} · Ref {{ item.reference }}</p>
+                @if (item.reason) {
+                  <p class="doctor-slot__reason">{{ item.reason }}</p>
+                }
+                <div class="doctor-slot__actions">
+                  <button type="button" class="mini-btn" (click)="openDetails(item)">
+                    <app-icon name="eye" [size]="13" />
+                    Details
+                  </button>
+                  @if (item.status === 'CONFIRMED') {
+                    <button type="button" class="mini-btn mini-btn--primary" (click)="complete(item)">
+                      <app-icon name="check" [size]="13" />
+                      Mark completed
+                    </button>
+                    <button type="button" class="mini-btn mini-btn--danger" (click)="noShow(item)">
+                      No-show
+                    </button>
+                  }
+                  @if (item.status === 'PENDING') {
+                    <span class="doctor-slot__awaiting">Awaiting front-desk confirmation</span>
+                  }
+                </div>
+              </div>
+            </article>
+          }
+        </div>
+      } @else {
+        <div class="db-empty">
+          <span class="db-empty__icon"><app-icon name="stethoscope" [size]="22" /></span>
+          <h2>No appointments today</h2>
+          <p>Your next visit is listed alongside. New bookings for you will appear here immediately.</p>
+          <a class="btn btn--outline btn--sm" routerLink="/doctor/appointments">See the schedule</a>
+        </div>
+      }
+    </section>
+
+    <aside class="db-grid">
+      @if (nextAppointment(); as next) {
+        <article class="next-patient">
+          <span class="next-patient__eyebrow">Next patient</span>
+          <div class="next-patient__head">
+            <div class="next-patient__date">
+              <span>{{ relative(next.appointmentDate) }}</span>
+              <strong>{{ time(next.startTime) }}</strong>
+            </div>
+            <app-status-badge [status]="next.status" />
+          </div>
+          <h2>{{ next.patientName }}</h2>
+          <p class="next-patient__service">{{ serviceName(next.serviceId) }}</p>
+          <dl class="next-patient__facts">
+            <div>
+              <dt>Phone</dt>
+              <dd>{{ next.phone }}</dd>
+            </div>
+            <div>
+              <dt>Reason</dt>
+              <dd>{{ next.reason || 'Not provided' }}</dd>
+            </div>
+          </dl>
+          <button type="button" class="btn btn--light btn--sm btn--block" (click)="openDetails(next)">
+            View appointment
+            <app-icon name="arrow-right" [size]="14" />
+          </button>
+        </article>
+      } @else {
+        <div class="db-card">
+          <div class="db-empty">
+            <span class="db-empty__icon"><app-icon name="calendar" [size]="20" /></span>
+            <h3>Nothing upcoming</h3>
+            <p>Your future bookings will appear here.</p>
+          </div>
+        </div>
+      }
+
+      <div class="scope-note">
+        <span class="scope-note__icon"><app-icon name="shield" [size]="18" /></span>
+        <h3>Your list only</h3>
+        <p>
+          Clinicians see appointments assigned to their own demo ID. Other clinicians' patients and
+          notes are hidden, as are prescriptions and medical records — none are part of this demo.
+        </p>
+      </div>
+    </aside>
+  </div>
+</section>
+
+@if (toast(); as message) {
+  <div class="db-toast" role="status" aria-live="polite">
+    <app-icon name="check" [size]="16" />
+    {{ message }}
+  </div>
+}
+
+<app-appointment-dialog
+  [appointment]="selected()"
+  [open]="detailsOpen()"
+  (closed)="closeDetails()"
+/>

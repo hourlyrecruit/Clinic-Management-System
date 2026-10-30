@@ -1,0 +1,131 @@
+<section class="db-page">
+  <div class="db-page-head">
+    <div>
+      <span class="eyebrow">Your appointments</span>
+      <h1>Every visit, <em>in one place.</em></h1>
+      <p>Upcoming visits and the full history from your patient record. All changes made by reception appear here immediately.</p>
+    </div>
+    <div class="db-actions">
+      <a class="btn btn--primary" routerLink="/patient/book-appointment">
+        <app-icon name="plus" [size]="16" />
+        Book a visit
+      </a>
+    </div>
+  </div>
+
+  <div class="db-tabs" role="tablist" aria-label="Appointment history">
+    <button
+      type="button"
+      role="tab"
+      [attr.aria-selected]="tab() === 'upcoming'"
+      [class.is-active]="tab() === 'upcoming'"
+      (click)="setTab('upcoming')"
+    >
+      Upcoming
+      <span class="db-tabs__count">{{ upcoming().length }}</span>
+    </button>
+    <button
+      type="button"
+      role="tab"
+      [attr.aria-selected]="tab() === 'past'"
+      [class.is-active]="tab() === 'past'"
+      (click)="setTab('past')"
+    >
+      Past & closed
+      <span class="db-tabs__count">{{ past().length }}</span>
+    </button>
+  </div>
+
+  @if (tab() === 'upcoming') {
+    @if (upcoming().length) {
+      <div class="appt-grid db-stagger">
+        @for (item of upcoming(); track item.id) {
+          <article class="appt-card">
+            <div class="appt-card__head">
+              <div class="appt-card__date">
+                <span>{{ dayParts(item.appointmentDate).weekday }}</span>
+                <strong>{{ dayParts(item.appointmentDate).day }}</strong>
+                <span>{{ dayParts(item.appointmentDate).month }}</span>
+              </div>
+              <div class="appt-card__title">
+                <span class="appt-card__eyebrow">{{ relative(item.appointmentDate) }}</span>
+                <h2>{{ serviceName(item.serviceId) }}</h2>
+                <p>{{ dateLong(item.appointmentDate) }} · {{ time(item.startTime) }} – {{ time(item.endTime) }}</p>
+              </div>
+              <app-status-badge [status]="item.status" />
+            </div>
+
+            <div class="appt-card__body">
+              <div class="appt-card__doctor">
+                <img [src]="doctorImage(item.doctorId)" alt="" width="40" height="40" />
+                <span>
+                  <strong>{{ doctorName(item.doctorId) }}</strong>
+                  <small>{{ doctorRole(item.doctorId) }}</small>
+                </span>
+              </div>
+              @if (item.reason) {
+                <p class="appt-card__reason">{{ item.reason }}</p>
+              }
+            </div>
+
+            <div class="appt-card__foot">
+              <span class="appt-card__ref">Ref {{ item.reference }}</span>
+              <span class="appt-card__place">
+                <app-icon name="pin" [size]="13" />
+                2180 NW Quimby St, Suite 120
+              </span>
+            </div>
+          </article>
+        }
+      </div>
+    } @else {
+      <section class="db-card">
+        <div class="db-empty">
+          <span class="db-empty__icon"><app-icon name="calendar" [size]="22" /></span>
+          <h2>No upcoming appointments</h2>
+          <p>Choose a treatment and a time that fits your week — your details are already filled in.</p>
+          <a class="btn btn--primary btn--sm" routerLink="/patient/book-appointment">
+            Book a visit
+            <app-icon name="arrow-right" [size]="15" />
+          </a>
+        </div>
+      </section>
+    }
+  } @else {
+    @if (past().length) {
+      <section class="db-card">
+        <div class="db-list">
+          @for (item of past(); track item.id) {
+            <div class="db-row">
+              <div class="db-row__time">
+                <strong>{{ dayParts(item.appointmentDate).day }} {{ dayParts(item.appointmentDate).month }}</strong>
+                <span>{{ time(item.startTime) }}</span>
+              </div>
+              <div class="db-row__main">
+                <strong>{{ serviceName(item.serviceId) }}</strong>
+                <span>{{ dateLong(item.appointmentDate) }} · {{ doctorName(item.doctorId) }}</span>
+                <span>Ref {{ item.reference }}</span>
+              </div>
+              <div class="db-row__side">
+                <app-status-badge [status]="item.status" />
+              </div>
+            </div>
+          }
+        </div>
+      </section>
+    } @else {
+      <section class="db-card">
+        <div class="db-empty">
+          <span class="db-empty__icon"><app-icon name="clock" [size]="22" /></span>
+          <h2>No past visits yet</h2>
+          <p>Once a visit is completed or an appointment is cancelled, it moves here.</p>
+        </div>
+      </section>
+    }
+  }
+
+  <p class="db-notice">
+    <app-icon name="shield" [size]="16" />
+    Demonstration record only. Appointments are stored in this browser and are not sent to the clinic.
+  </p>
+</section>

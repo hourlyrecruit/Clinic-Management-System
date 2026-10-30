@@ -1,0 +1,13 @@
+:host {
+  display: block;
+}
+
+.auth-card {
+  gap: 0.85rem;
+}
+
+.error-text a {
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}

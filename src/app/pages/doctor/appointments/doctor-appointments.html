@@ -1,0 +1,164 @@
+<section class="db-page">
+  <div class="db-page-head">
+    <div>
+      <span class="eyebrow">My schedule</span>
+      <h1>Only <em>your</em> patients.</h1>
+      <p>
+        {{ doctor()?.name }} · {{ doctor()?.role }}. The diary is filtered to your demo clinician ID;
+        other clinicians' appointments are not visible.
+      </p>
+    </div>
+    <div class="db-actions">
+      <a class="btn btn--outline btn--sm" routerLink="/doctor/dashboard">
+        <app-icon name="dashboard" [size]="15" />
+        Overview
+      </a>
+    </div>
+  </div>
+
+  <div class="doctor-counts">
+    <span><strong>{{ mine().length }}</strong> assigned</span>
+    <span><strong>{{ mine().filter(item => item.status === 'CONFIRMED').length }}</strong> confirmed</span>
+    <span><strong>{{ mine().filter(item => item.status === 'COMPLETED').length }}</strong> completed</span>
+    <span><strong>{{ mine().filter(item => item.status === 'NO_SHOW').length }}</strong> no-shows</span>
+  </div>
+
+  <section class="db-card">
+    <div class="doctor-toolbar">
+      <div class="db-tabs" role="group" aria-label="Date range">
+        <button type="button" [class.is-active]="!dateFilter() && scope() === 'upcoming'" (click)="setScope('upcoming')">
+          Upcoming
+        </button>
+        <button type="button" [class.is-active]="!dateFilter() && scope() === 'today'" (click)="setScope('today')">
+          Today
+        </button>
+        <button type="button" [class.is-active]="!dateFilter() && scope() === 'past'" (click)="setScope('past')">
+          Past
+        </button>
+        <button type="button" [class.is-active]="!dateFilter() && scope() === 'all'" (click)="setScope('all')">
+          All
+        </button>
+      </div>
+
+      <label class="db-search">
+        <app-icon name="search" [size]="15" />
+        <span class="sr-only">Search your appointments</span>
+        <input
+          type="search"
+          placeholder="Patient, ref or phone…"
+          [value]="query()"
+          (input)="setQuery($event)"
+        />
+      </label>
+    </div>
+
+    <div class="doctor-filters">
+      <label class="doctor-filter">
+        <span>Date</span>
+        <input class="db-select" type="date" [value]="dateFilter()" (change)="setDate($event)" />
+      </label>
+      <label class="doctor-filter">
+        <span>Status</span>
+        <select class="db-select" [value]="statusFilter()" (change)="setStatus($event)">
+          <option value="ALL">All statuses</option>
+          <option value="PENDING">Pending</option>
+          <option value="CONFIRMED">Confirmed</option>
+          <option value="COMPLETED">Completed</option>
+          <option value="CANCELLED">Cancelled</option>
+          <option value="NO_SHOW">No-show</option>
+        </select>
+      </label>
+      <button type="button" class="mini-btn" (click)="resetFilters()">
+        <app-icon name="refresh" [size]="13" />
+        Clear
+      </button>
+      <span class="doctor-filter__count">{{ filtered().length }} shown</span>
+    </div>
+
+    @if (filtered().length) {
+      <div class="db-table-wrap">
+        <table class="db-table doctor-table">
+          <thead>
+            <tr>
+              <th>When</th>
+              <th>Patient</th>
+              <th>Contact</th>
+              <th>Service & reason</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of filtered(); track item.id) {
+              <tr>
+                <td data-label="When">
+                  <div class="db-table__when">
+                    <strong>{{ relative(item.appointmentDate) }}</strong>
+                    <span>{{ dateShort(item.appointmentDate) }} · {{ time(item.startTime) }}</span>
+                    <span class="db-table__ref">{{ item.reference }}</span>
+                  </div>
+                </td>
+                <td data-label="Patient">
+                  <span class="db-table__strong">{{ item.patientName }}</span>
+                  <span class="db-table__muted">{{ time(item.startTime) }} – {{ time(item.endTime) }}</span>
+                </td>
+                <td data-label="Contact">
+                  <span>{{ item.phone }}</span>
+                  <span class="db-table__muted">{{ item.email || 'No email on record' }}</span>
+                </td>
+                <td data-label="Service">
+                  <span class="db-table__strong">{{ serviceName(item.serviceId) }}</span>
+                  <span class="db-table__muted doctor-reason">{{ item.reason || 'No reason provided' }}</span>
+                </td>
+                <td data-label="Status"><app-status-badge [status]="item.status" /></td>
+                <td data-label="Actions">
+                  <div class="db-table__actions">
+                    <button type="button" class="mini-btn" (click)="openDetails(item)">
+                      <app-icon name="eye" [size]="13" />
+                      View
+                    </button>
+                    @if (item.status === 'CONFIRMED') {
+                      <button type="button" class="mini-btn mini-btn--primary" (click)="complete(item)">
+                        <app-icon name="check" [size]="13" />
+                        Complete
+                      </button>
+                      <button type="button" class="mini-btn mini-btn--danger" (click)="noShow(item)">
+                        No-show
+                      </button>
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <div class="db-empty">
+        <span class="db-empty__icon"><app-icon name="calendar" [size]="22" /></span>
+        <h2>No appointments match</h2>
+        <p>Try another date range or clear the filters. Only your own patients appear here.</p>
+        <button type="button" class="btn btn--outline btn--sm" (click)="resetFilters()">Clear filters</button>
+      </div>
+    }
+  </section>
+
+  <p class="db-notice">
+    <app-icon name="shield" [size]="16" />
+    Completing a visit or recording a no-show updates the reception and patient views immediately.
+    These actions are final in the demo; prescriptions, notes and billing are intentionally absent.
+  </p>
+</section>
+
+@if (toast(); as message) {
+  <div class="db-toast" role="status" aria-live="polite">
+    <app-icon name="check" [size]="16" />
+    {{ message }}
+  </div>
+}
+
+<app-appointment-dialog
+  [appointment]="selected()"
+  [open]="detailsOpen()"
+  (closed)="closeDetails()"
+/>

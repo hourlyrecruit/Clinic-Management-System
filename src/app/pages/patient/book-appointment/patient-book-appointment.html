@@ -1,0 +1,20 @@
+<section class="db-page">
+  <div class="db-page-head">
+    <div>
+      <span class="eyebrow">New appointment</span>
+      <h1>Book your <em>next visit.</em></h1>
+      <p>
+        Your patient record is already attached, so we only need the treatment, the clinician and a
+        time that works for you.
+      </p>
+    </div>
+    <div class="db-actions">
+      <a class="btn btn--outline btn--sm" routerLink="/patient/appointments">
+        <app-icon name="calendar" [size]="15" />
+        My appointments
+      </a>
+    </div>
+  </div>
+
+  <app-booking-wizard mode="patient" />
+</section>

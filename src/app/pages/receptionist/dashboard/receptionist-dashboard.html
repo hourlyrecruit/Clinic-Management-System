@@ -1,0 +1,235 @@
+<section class="db-page">
+  <div class="db-page-head">
+    <div>
+      <span class="eyebrow">Front desk</span>
+      <h1>Good day, <em>{{ firstName() }}.</em></h1>
+      <p>{{ todayLabel }} · Confirm requests, keep the diary tidy and answer the people waiting on us.</p>
+    </div>
+    <div class="db-actions">
+      <a class="btn btn--primary" routerLink="/receptionist/book-appointment">
+        <app-icon name="plus" [size]="16" />
+        Book for a patient
+      </a>
+      <a class="btn btn--outline" routerLink="/receptionist/appointments">
+        <app-icon name="calendar" [size]="15" />
+        All appointments
+      </a>
+    </div>
+  </div>
+
+  <div class="db-stats db-stagger">
+    @for (stat of stats(); track stat.label) {
+      <article class="db-stat">
+        <div class="db-stat__top">
+          <span class="db-stat__label">{{ stat.label }}</span>
+          <span [class]="'db-stat__icon' + stat.tone">
+            <app-icon [name]="stat.icon" [size]="17" />
+          </span>
+        </div>
+        <strong class="db-stat__value">{{ stat.value }}</strong>
+        <span class="db-stat__hint">{{ stat.hint }}</span>
+      </article>
+    }
+  </div>
+
+  <div class="db-grid db-grid--split">
+    <div class="db-grid">
+      <section class="db-card">
+        <div class="db-card__head">
+          <div>
+            <h2>Today's schedule</h2>
+            <p>{{ todayAppointments().length }} active appointments · {{ todayLabel }}</p>
+          </div>
+          <a class="db-link" routerLink="/receptionist/appointments" [queryParams]="{ date: today }">
+            Open diary
+            <app-icon name="arrow-right" [size]="13" />
+          </a>
+        </div>
+
+        @if (todayAppointments().length) {
+          <div class="db-list">
+            @for (item of todayAppointments(); track item.id) {
+              <div class="db-row">
+                <div class="db-row__time">
+                  <strong>{{ time(item.startTime) }}</strong>
+                  <span>{{ time(item.endTime) }}</span>
+                </div>
+                <div class="db-row__main">
+                  <strong>{{ item.patientName }}</strong>
+                  <span>{{ serviceName(item.serviceId) }} · {{ doctorName(item.doctorId) }}</span>
+                </div>
+                <div class="db-row__side">
+                  <app-status-badge [status]="item.status" />
+                  <button
+                    type="button"
+                    class="mini-btn"
+                    aria-label="View appointment"
+                    (click)="openDetails(item)"
+                  >
+                    <app-icon name="eye" [size]="14" />
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="db-empty">
+            <span class="db-empty__icon"><app-icon name="calendar" [size]="21" /></span>
+            <h3>A clear day</h3>
+            <p>No active appointments booked for today. Online bookings will appear here instantly.</p>
+            <a class="btn btn--outline btn--sm" routerLink="/receptionist/book-appointment">
+              Book a patient in
+            </a>
+          </div>
+        }
+      </section>
+
+      <section class="db-card">
+        <div class="db-card__head">
+          <div>
+            <h2>Support inbox</h2>
+            <p>{{ store.openMessages().length }} open enquiries from the website</p>
+          </div>
+        </div>
+
+        @if (enquiries().length) {
+          <div class="enquiry-list">
+            @for (message of enquiries(); track message.id) {
+              <article class="enquiry" [class.is-resolved]="message.status === 'resolved'">
+                <header class="enquiry__head">
+                  <span class="enquiry__source">{{ sourceLabel(message.source) }}</span>
+                  <time>{{ timestamp(message.createdAt) }}</time>
+                </header>
+                <div class="enquiry__title">
+                  <strong>{{ message.name }}</strong>
+                  <span>{{ message.contact }}</span>
+                </div>
+                <p class="enquiry__message">{{ message.message }}</p>
+                <footer class="enquiry__foot">
+                  <span class="enquiry__topic">{{ message.topic }}</span>
+                  @if (message.status === 'open') {
+                    <button type="button" class="mini-btn mini-btn--text" (click)="resolve(message)">
+                      <app-icon name="check" [size]="13" />
+                      Mark resolved
+                    </button>
+                  } @else {
+                    <span class="enquiry__done">Resolved</span>
+                  }
+                </footer>
+              </article>
+            }
+          </div>
+        } @else {
+          <div class="db-empty">
+            <span class="db-empty__icon"><app-icon name="inbox" [size]="21" /></span>
+            <h3>Inbox clear</h3>
+            <p>Care-chat messages and consultation requests will land here.</p>
+          </div>
+        }
+      </section>
+    </div>
+
+    <aside class="db-grid">
+      <section class="db-card">
+        <div class="db-card__head">
+          <div>
+            <h2>Awaiting confirmation</h2>
+            <p>{{ pending().length }} requests need a decision</p>
+          </div>
+          <span class="pending-badge">{{ pending().length }}</span>
+        </div>
+
+        @if (pending().length) {
+          <div class="pending-list">
+            @for (item of pending(); track item.id) {
+              <article class="pending-item">
+                <div class="pending-item__when">
+                  <strong>{{ relative(item.appointmentDate) }}</strong>
+                  <span>{{ time(item.startTime) }}</span>
+                </div>
+                <div class="pending-item__main">
+                  <strong>{{ item.patientName }}</strong>
+                  <span>{{ serviceName(item.serviceId) }} · {{ doctorName(item.doctorId) }}</span>
+                  @if (item.createdByRole === 'PATIENT') {
+                    <small>Booked online</small>
+                  } @else {
+                    <small>Added by reception</small>
+                  }
+                </div>
+                <div class="pending-item__actions">
+                  <button type="button" class="mini-btn mini-btn--primary" (click)="confirm(item)">
+                    <app-icon name="check" [size]="13" />
+                    Confirm
+                  </button>
+                  <button type="button" class="mini-btn" (click)="openReschedule(item)">
+                    Move
+                  </button>
+                </div>
+              </article>
+            }
+          </div>
+        } @else {
+          <div class="db-empty">
+            <span class="db-empty__icon"><app-icon name="check-circle" [size]="21" /></span>
+            <h3>All caught up</h3>
+            <p>Every request has been reviewed. Nice work.</p>
+          </div>
+        }
+      </section>
+
+      <section class="db-card quick-card">
+        <div class="db-card__head">
+          <div>
+            <h2>Quick actions</h2>
+            <p>Common front-desk tasks</p>
+          </div>
+        </div>
+        <div class="quick-list">
+          <a routerLink="/receptionist/book-appointment">
+            <span class="quick-list__icon"><app-icon name="plus" [size]="16" /></span>
+            <span>
+              <strong>Book for a patient</strong>
+              <small>Existing or new patient</small>
+            </span>
+            <app-icon name="arrow-right" [size]="14" />
+          </a>
+          <a routerLink="/receptionist/patients">
+            <span class="quick-list__icon"><app-icon name="users" [size]="16" /></span>
+            <span>
+              <strong>Patient records</strong>
+              <small>Search and register</small>
+            </span>
+            <app-icon name="arrow-right" [size]="14" />
+          </a>
+          <a routerLink="/receptionist/appointments">
+            <span class="quick-list__icon"><app-icon name="calendar" [size]="16" /></span>
+            <span>
+              <strong>Manage appointments</strong>
+              <small>Reschedule or cancel</small>
+            </span>
+            <app-icon name="arrow-right" [size]="14" />
+          </a>
+        </div>
+      </section>
+    </aside>
+  </div>
+</section>
+
+@if (toast(); as message) {
+  <div class="db-toast" role="status" aria-live="polite">
+    <app-icon name="check" [size]="16" />
+    {{ message }}
+  </div>
+}
+
+<app-appointment-dialog
+  [appointment]="selected()"
+  [open]="detailsOpen()"
+  (closed)="closeDetails()"
+/>
+<app-reschedule-dialog
+  [appointment]="rescheduleTarget()"
+  [open]="rescheduleOpen()"
+  (closed)="closeReschedule()"
+  (rescheduled)="onRescheduled($event)"
+/>

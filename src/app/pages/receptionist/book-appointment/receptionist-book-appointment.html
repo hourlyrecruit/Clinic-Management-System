@@ -1,0 +1,127 @@
+<section class="db-page">
+  <div class="db-page-head">
+    <div>
+      <span class="eyebrow">Front desk booking</span>
+      <h1>Book on behalf of <em>a patient.</em></h1>
+      <p>
+        Find an existing record or create a new one, then choose the treatment, clinician and slot.
+        The booking belongs to the patient — your account is recorded as the creator.
+      </p>
+    </div>
+    <div class="db-actions">
+      <a class="btn btn--outline btn--sm" routerLink="/receptionist/appointments">
+        <app-icon name="calendar" [size]="15" />
+        All appointments
+      </a>
+    </div>
+  </div>
+
+  @if (selectedPatient(); as patient) {
+    <div class="chosen-patient">
+      <span class="chosen-patient__avatar">{{ initials(patient.name) }}</span>
+      <span class="chosen-patient__text">
+        <small>Booking for</small>
+        <strong>{{ patient.name }}</strong>
+        <span>{{ patient.phone }}{{ patient.email ? ' · ' + patient.email : '' }}</span>
+      </span>
+      @if (patient.provisional) {
+        <span class="chosen-patient__tag">Demo record · no sign-in</span>
+      }
+      <button type="button" class="btn btn--outline btn--sm chosen-patient__change" (click)="changePatient()">
+        Change patient
+      </button>
+    </div>
+
+    @if (matchNotice()) {
+      <p class="db-notice db-notice--teal" role="status">
+        <app-icon name="check-circle" [size]="16" />
+        {{ matchNotice() }}
+      </p>
+    }
+
+    <app-booking-wizard mode="staff" [patient]="patient" [creator]="creator()" />
+  } @else {
+    <div class="db-grid db-grid--split patient-picker">
+      <section class="db-card">
+        <div class="db-card__head">
+          <div>
+            <h2>Existing patient</h2>
+            <p>Search by name, email or phone number.</p>
+          </div>
+          <span class="picker-count">{{ results().length }} shown</span>
+        </div>
+
+        <div class="picker-search">
+          <label class="db-search">
+            <app-icon name="search" [size]="15" />
+            <span class="sr-only">Search patients</span>
+            <input
+              type="search"
+              placeholder="Start typing a name, email or phone…"
+              [value]="query()"
+              (input)="setQuery($event)"
+            />
+          </label>
+        </div>
+
+        @if (results().length) {
+          <div class="patient-results">
+            @for (patient of results(); track patient.id) {
+              <button type="button" class="patient-result" (click)="selectPatient(patient)">
+                <span class="patient-result__avatar">{{ initials(patient.name) }}</span>
+                <span class="patient-result__main">
+                  <strong>{{ patient.name }}</strong>
+                  <span>{{ patient.phone }}{{ patient.email ? ' · ' + patient.email : '' }}</span>
+                </span>
+                <span class="patient-result__meta">
+                  <span>{{ appointmentCount(patient.id) }} appts</span>
+                  @if (isProvisional(patient)) {
+                    <small>No portal login</small>
+                  } @else {
+                    <small>Portal account</small>
+                  }
+                </span>
+                <app-icon name="arrow-right" [size]="15" />
+              </button>
+            }
+          </div>
+          <p class="picker-note">
+            <app-icon name="shield" [size]="14" />
+            Reception can see contact details for the demo clinic's patients only.
+          </p>
+        } @else {
+          <div class="db-empty">
+            <span class="db-empty__icon"><app-icon name="search" [size]="20" /></span>
+            <h3>No matching patient</h3>
+            <p>Try another spelling or create a new record using the form alongside.</p>
+          </div>
+        }
+      </section>
+
+      <aside class="db-card">
+        <div class="db-card__head">
+          <div>
+            <h2>New patient</h2>
+            <p>Create a demo record, then book the visit.</p>
+          </div>
+        </div>
+        <div class="db-card__body">
+          <app-patient-form (saved)="onPatientSaved($event)" />
+        </div>
+      </aside>
+    </div>
+
+    <p class="db-notice">
+      <app-icon name="alert" [size]="16" />
+      Reception-created records are provisional demo patients: they can be booked, but they have no
+      portal password. Use public registration for a patient who needs to sign in.
+    </p>
+  }
+</section>
+
+@if (toast(); as message) {
+  <div class="db-toast" role="status" aria-live="polite">
+    <app-icon name="check" [size]="16" />
+    {{ message }}
+  </div>
+}

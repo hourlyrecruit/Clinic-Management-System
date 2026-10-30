@@ -28,6 +28,34 @@ export function parseTime(time: string): { hours: number; minutes: number } {
   return { hours, minutes };
 }
 
+export function timeToMinutes(time: string): number {
+  const { hours, minutes } = parseTime(time);
+  return hours * 60 + minutes;
+}
+
+export function minutesToTime(total: number): string {
+  const hours = Math.floor(total / 60);
+  const minutes = total % 60;
+  return `${`${hours}`.padStart(2, '0')}:${`${minutes}`.padStart(2, '0')}`;
+}
+
+export function addMinutes(time: string, minutes: number): string {
+  return minutesToTime(timeToMinutes(time) + minutes);
+}
+
+export function rangesOverlap(
+  startA: string,
+  endA: string,
+  startB: string,
+  endB: string,
+): boolean {
+  return timeToMinutes(startA) < timeToMinutes(endB) && timeToMinutes(endA) > timeToMinutes(startB);
+}
+
+export function isPastDate(iso: string): boolean {
+  return iso < todayIso();
+}
+
 export function formatTime(time: string): string {
   const { hours, minutes } = parseTime(time);
   const suffix = hours >= 12 ? 'PM' : 'AM';

@@ -1,0 +1,176 @@
+<section class="db-page">
+  <div class="db-page-head">
+    <div>
+      <span class="eyebrow">Patient records</span>
+      <h1>Know who is <em>in the chair.</em></h1>
+      <p>Search demo patient records, register someone new, or jump straight into booking their next visit.</p>
+    </div>
+    <div class="db-actions">
+      <button type="button" class="btn btn--primary" (click)="openNew()">
+        <app-icon name="plus" [size]="16" />
+        New patient
+      </button>
+    </div>
+  </div>
+
+  <div class="patient-stats">
+    <span><strong>{{ results().length }}</strong> patients shown</span>
+    <span><strong>{{ auth.patients().length }}</strong> total demo patients</span>
+  </div>
+
+  <section class="db-card">
+    <div class="patient-toolbar">
+      <label class="db-search">
+        <app-icon name="search" [size]="15" />
+        <span class="sr-only">Search patients</span>
+        <input
+          type="search"
+          placeholder="Search name, email or phone…"
+          [value]="query()"
+          (input)="setQuery($event)"
+        />
+      </label>
+      <span class="patient-toolbar__hint">Matching uses name, email or the last ten phone digits.</span>
+    </div>
+
+    @if (results().length) {
+      <div class="patient-grid">
+        @for (patient of results(); track patient.id) {
+          <article class="patient-card">
+            <header class="patient-card__head">
+              <span class="patient-card__avatar">{{ initials(patient.name) }}</span>
+              <div>
+                <strong>{{ patient.name }}</strong>
+                <span>{{ patient.email || 'No email on record' }}</span>
+              </div>
+              @if (patient.provisional) {
+                <span class="patient-card__tag">Provisional</span>
+              } @else {
+                <span class="patient-card__tag patient-card__tag--account">Portal account</span>
+              }
+            </header>
+
+            <dl class="patient-card__facts">
+              <div>
+                <dt>Phone</dt>
+                <dd>{{ patient.phone }}</dd>
+              </div>
+              <div>
+                <dt>Visits</dt>
+                <dd>{{ appointmentCount(patient.id) }} total · {{ upcomingCount(patient.id) }} upcoming</dd>
+              </div>
+            </dl>
+
+            <footer class="patient-card__actions">
+              <button type="button" class="mini-btn" (click)="openPatient(patient)">
+                <app-icon name="eye" [size]="13" />
+                View record
+              </button>
+              <a
+                class="mini-btn mini-btn--primary"
+                routerLink="/receptionist/book-appointment"
+                [queryParams]="{ patientId: patient.id }"
+              >
+                <app-icon name="calendar" [size]="13" />
+                Book
+              </a>
+            </footer>
+          </article>
+        }
+      </div>
+    } @else {
+      <div class="db-empty">
+        <span class="db-empty__icon"><app-icon name="search" [size]="22" /></span>
+        <h2>No patient matches</h2>
+        <p>Try a different name, email or phone number — or register a new patient.</p>
+        <button type="button" class="btn btn--outline btn--sm" (click)="openNew()">New patient</button>
+      </div>
+    }
+  </section>
+
+  <p class="db-notice">
+    <app-icon name="shield" [size]="16" />
+    These are fictional demo records stored in this browser. Reception-created patients have no
+    sign-in password until they register themselves.
+  </p>
+</section>
+
+@if (toast(); as message) {
+  <div class="db-toast" role="status" aria-live="polite">
+    <app-icon name="check" [size]="16" />
+    {{ message }}
+  </div>
+}
+
+<dialog #newDialog class="db-modal" aria-labelledby="new-patient-title" (cancel)="closeNew($event)">
+  <div class="db-modal__head">
+    <div>
+      <h2 id="new-patient-title">Register a demo patient</h2>
+      <p>Matching email or phone reuses an existing record.</p>
+    </div>
+    <button type="button" class="db-icon-btn" aria-label="Close" (click)="closeNew()">
+      <app-icon name="close" [size]="17" />
+    </button>
+  </div>
+  <div class="db-modal__section">
+    <app-patient-form (saved)="onSaved($event)" />
+  </div>
+</dialog>
+
+<dialog #patientDialog class="db-modal" aria-labelledby="patient-title" (cancel)="closePatient($event)">
+  @if (selected(); as patient) {
+    <div class="db-modal__head">
+      <div>
+        <h2 id="patient-title">{{ patient.name }}</h2>
+        <p>{{ patient.email || 'No email on record' }} · {{ patient.phone }}</p>
+      </div>
+      <button type="button" class="db-icon-btn" aria-label="Close" (click)="closePatient()">
+        <app-icon name="close" [size]="17" />
+      </button>
+    </div>
+
+    <div class="db-modal__section patient-detail__meta">
+      <span class="patient-card__avatar">{{ initials(patient.name) }}</span>
+      <div>
+        <span class="patient-detail__label">Patient ID</span>
+        <strong>{{ patient.id }}</strong>
+      </div>
+      @if (patient.provisional) {
+        <span class="patient-card__tag">Provisional · no portal login</span>
+      } @else {
+        <span class="patient-card__tag patient-card__tag--account">Portal account</span>
+      }
+    </div>
+
+    <div class="db-modal__section">
+      <h3>Appointments ({{ selectedAppointments().length }})</h3>
+      @if (selectedAppointments().length) {
+        <div class="patient-detail__list">
+          @for (item of selectedAppointments(); track item.id) {
+            <div class="patient-detail__row">
+              <div>
+                <strong>{{ serviceName(item.serviceId) }}</strong>
+                <span>{{ dateShort(item.appointmentDate) }} · {{ time(item.startTime) }} · {{ doctorName(item.doctorId) }}</span>
+              </div>
+              <app-status-badge [status]="item.status" />
+            </div>
+          }
+        </div>
+      } @else {
+        <p class="patient-detail__empty">No appointments yet for this patient.</p>
+      }
+    </div>
+
+    <div class="db-modal__section patient-detail__actions">
+      <button type="button" class="btn btn--outline btn--sm" (click)="closePatient()">Close</button>
+      <a
+        class="btn btn--primary btn--sm"
+        routerLink="/receptionist/book-appointment"
+        [queryParams]="{ patientId: patient.id }"
+        (click)="closePatient()"
+      >
+        Book an appointment
+      </a>
+    </div>
+  }
+</dialog>
