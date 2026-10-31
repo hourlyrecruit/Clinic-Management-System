@@ -1,26 +1,21 @@
 import { Injectable, computed, effect, signal } from '@angular/core';
-import { SEED_PATIENTS } from './auth.data';
-import { endTimeFor, isSlotAvailable, nextAvailableDate, slotsForDoctor } from './availability';
-import { DENTISTS, scheduleFor, serviceById } from './clinic-data';
+import { DENTISTS } from './clinic-data';
 import { addDays, todayIso } from './date.utils';
 import {
   Appointment,
-  AppointmentResult,
   AppointmentStatus,
+  BookingInput,
   ClinicMessage,
-  CreateAppointmentInput,
   MessageSource,
   MessageStatus,
-  Slot,
 } from './models';
-import { canTransition } from './appointment-status';
 
 interface PersistedClinic {
   appointments: Appointment[];
   messages: ClinicMessage[];
 }
 
-const STORAGE_KEY = 'lumina-clinic-v2';
+const STORAGE_KEY = 'lumina-clinic-v1';
 
 @Injectable({ providedIn: 'root' })
 export class ClinicStore {
@@ -31,7 +26,7 @@ export class ClinicStore {
     this.messages().filter((message) => message.status === 'open'),
   );
   readonly pendingAppointments = computed(() =>
-    this.appointments().filter((appointment) => appointment.status === 'PENDING'),
+    this.appointments().filter((appointment) => appointment.status === 'pending'),
   );
 
   constructor() {
@@ -51,191 +46,37 @@ export class ClinicStore {
     });
   }
 
-  create(input: CreateAppointmentInput): AppointmentResult {
-    const service = serviceById(input.serviceId);
-    const doctor = DENTISTS.find((dentist) => dentist.id === input.doctorId);
+  book(input: BookingInput): Appointment {
+    const assignedDentistId =
+      input.dentistId === 'any'
+        ? (this.findAvailableDentist(input.date, input.time) ?? DENTISTS[0].id)
+        : input.dentistId;
 
-    if (!service || !doctor) {
-      return { ok: false, error: 'Choose a treatment and clinician before confirming.' };
-    }
-    if (!input.appointmentDate) {
-      return { ok: false, error: 'Choose an appointment date.' };
-    }
-    if (!input.startTime) {
-      return { ok: false, error: 'Choose an appointment time.' };
-    }
-    if (input.appointmentDate < todayIso()) {
-      return { ok: false, error: 'That date has already passed. Please choose another day.' };
-    }
-    if (!scheduleFor(doctor.id, input.appointmentDate)) {
-      return {
-        ok: false,
-        error: `${doctor.name} is not in clinic that day. Please pick another date.`,
-      };
-    }
-    if (
-      !isSlotAvailable(this.appointments(), {
-        doctorId: doctor.id,
-        date: input.appointmentDate,
-        startTime: input.startTime,
-        durationMinutes: service.durationMinutes,
-      })
-    ) {
-      return {
-        ok: false,
-        error: 'That slot has just been taken. Please pick another time — the list is up to date.',
-      };
-    }
-
-    const now = new Date().toISOString();
     const appointment: Appointment = {
-      id: makeId('apt'),
+      id: `apt-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
       reference: this.nextReference(),
-      patientId: input.patientId,
       patientName: input.patientName.trim(),
       email: input.email.trim(),
       phone: input.phone.trim(),
-      doctorId: doctor.id,
-      serviceId: service.id,
-      appointmentDate: input.appointmentDate,
-      startTime: input.startTime,
-      endTime: endTimeFor(service.id, input.startTime),
-      reason: input.reason.trim(),
-      status: 'PENDING',
-      createdByUserId: input.createdByUserId,
-      createdByRole: input.createdByRole,
-      createdAt: now,
-      updatedAt: now,
+      serviceId: input.serviceId,
+      dentistId: assignedDentistId,
+      date: input.date,
+      time: input.time,
+      notes: input.notes.trim(),
+      status: 'pending',
+      createdAt: new Date().toISOString(),
     };
 
     this.appointments.update((current) => [...current, appointment]);
-    return { ok: true, appointment };
+    return appointment;
   }
 
-  reschedule(id: string, date: string, startTime: string): AppointmentResult {
-    const appointment = this.appointments().find((item) => item.id === id);
-    if (!appointment) {
-      return { ok: false, error: 'Appointment not found.' };
-    }
-    if (appointment.status !== 'PENDING' && appointment.status !== 'CONFIRMED') {
-      return { ok: false, error: 'Only pending or confirmed appointments can be rescheduled.' };
-    }
-    const service = serviceById(appointment.serviceId);
-    if (!service) {
-      return { ok: false, error: 'The treatment for this appointment is unavailable.' };
-    }
-    if (date < todayIso()) {
-      return { ok: false, error: 'Choose a future date.' };
-    }
-    if (!scheduleFor(appointment.doctorId, date)) {
-      return { ok: false, error: 'That clinician is not in clinic on the chosen day.' };
-    }
-    if (
-      !isSlotAvailable(this.appointments(), {
-        doctorId: appointment.doctorId,
-        date,
-        startTime,
-        durationMinutes: service.durationMinutes,
-        excludeAppointmentId: appointment.id,
-      })
-    ) {
-      return { ok: false, error: 'That slot is unavailable. Please choose another time.' };
-    }
-
-    const updated: Appointment = {
-      ...appointment,
-      appointmentDate: date,
-      startTime,
-      endTime: endTimeFor(appointment.serviceId, startTime),
-      updatedAt: new Date().toISOString(),
-    };
+  updateStatus(id: string, status: AppointmentStatus): void {
     this.appointments.update((current) =>
-      current.map((item) => (item.id === id ? updated : item)),
+      current.map((appointment) =>
+        appointment.id === id ? { ...appointment, status } : appointment,
+      ),
     );
-    return { ok: true, appointment: updated };
-  }
-
-  updateStatus(id: string, status: AppointmentStatus): AppointmentResult {
-    const appointment = this.appointments().find((item) => item.id === id);
-    if (!appointment) {
-      return { ok: false, error: 'Appointment not found.' };
-    }
-    if (!canTransition(appointment.status, status)) {
-      return {
-        ok: false,
-        error: `A ${appointment.status.toLowerCase().replace('_', '-')} appointment cannot become ${status
-          .toLowerCase()
-          .replace('_', '-')}.`,
-      };
-    }
-    const updated: Appointment = {
-      ...appointment,
-      status,
-      updatedAt: new Date().toISOString(),
-    };
-    this.appointments.update((current) =>
-      current.map((item) => (item.id === id ? updated : item)),
-    );
-    return { ok: true, appointment: updated };
-  }
-
-  forPatient(patientId: string): Appointment[] {
-    return this.appointments()
-      .filter((appointment) => appointment.patientId === patientId)
-      .slice()
-      .sort(byDateTimeAsc);
-  }
-
-  upcomingForPatient(patientId: string): Appointment[] {
-    const today = todayIso();
-    return this.forPatient(patientId).filter(
-      (appointment) =>
-        (appointment.status === 'PENDING' || appointment.status === 'CONFIRMED') &&
-        appointment.appointmentDate >= today,
-    );
-  }
-
-  historyForPatient(patientId: string): Appointment[] {
-    const today = todayIso();
-    return this.forPatient(patientId)
-      .filter(
-        (appointment) =>
-          (appointment.status !== 'PENDING' && appointment.status !== 'CONFIRMED') ||
-          appointment.appointmentDate < today,
-      )
-      .sort(byDateTimeDesc);
-  }
-
-  forDoctor(doctorId: string): Appointment[] {
-    return this.appointments()
-      .filter((appointment) => appointment.doctorId === doctorId)
-      .slice()
-      .sort(byDateTimeAsc);
-  }
-
-  forDate(date: string): Appointment[] {
-    return this.appointments()
-      .filter((appointment) => appointment.appointmentDate === date)
-      .slice()
-      .sort(byDateTimeAsc);
-  }
-
-  availableSlots(
-    doctorId: string,
-    date: string,
-    serviceId: string,
-    excludeAppointmentId?: string,
-  ): Slot[] {
-    return slotsForDoctor(this.appointments(), {
-      doctorId,
-      date,
-      serviceId,
-      excludeAppointmentId,
-    });
-  }
-
-  nextAvailableDate(doctorId: string, serviceId: string): string | undefined {
-    return nextAvailableDate(this.appointments(), doctorId, serviceId);
   }
 
   addMessage(
@@ -243,7 +84,7 @@ export class ClinicStore {
   ): ClinicMessage {
     const message: ClinicMessage = {
       ...input,
-      id: makeId('msg'),
+      id: `msg-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
       createdAt: new Date().toISOString(),
       status: input.status ?? 'open',
     };
@@ -255,6 +96,29 @@ export class ClinicStore {
     this.messages.update((current) =>
       current.map((message) => (message.id === id ? { ...message, status: 'resolved' } : message)),
     );
+  }
+
+  isSlotTaken(dentistId: string, date: string, time: string): boolean {
+    return this.appointments().some(
+      (appointment) =>
+        appointment.dentistId === dentistId &&
+        appointment.date === date &&
+        appointment.time === time &&
+        appointment.status !== 'cancelled',
+    );
+  }
+
+  /** A slot is open for "first available" when at least one clinician is free. */
+  hasOpenSlot(date: string, time: string): boolean {
+    return DENTISTS.some((dentist) => !this.isSlotTaken(dentist.id, date, time));
+  }
+
+  isDentistFree(dentistId: string, date: string, time: string): boolean {
+    return !this.isSlotTaken(dentistId, date, time);
+  }
+
+  findAvailableDentist(date: string, time: string): string | undefined {
+    return DENTISTS.find((dentist) => this.isDentistFree(dentist.id, date, time))?.id;
   }
 
   resetDemoData(): void {
@@ -296,11 +160,8 @@ export class ClinicStore {
       if (!Array.isArray(parsed.appointments) || !Array.isArray(parsed.messages)) {
         return null;
       }
-      if (!parsed.appointments.every(isStoredAppointment)) {
-        return null;
-      }
       return {
-        appointments: parsed.appointments,
+        appointments: parsed.appointments as Appointment[],
         messages: parsed.messages as ClinicMessage[],
       };
     } catch {
@@ -309,228 +170,121 @@ export class ClinicStore {
   }
 }
 
-function byDateTimeAsc(a: Appointment, b: Appointment): number {
-  return `${a.appointmentDate}${a.startTime}`.localeCompare(`${b.appointmentDate}${b.startTime}`);
-}
-
-function byDateTimeDesc(a: Appointment, b: Appointment): number {
-  return `${b.appointmentDate}${b.startTime}`.localeCompare(`${a.appointmentDate}${a.startTime}`);
-}
-
-function isStoredAppointment(value: unknown): value is Appointment {
-  if (!value || typeof value !== 'object') {
-    return false;
-  }
-  const appointment = value as Partial<Appointment>;
-  return (
-    typeof appointment.id === 'string' &&
-    typeof appointment.reference === 'string' &&
-    typeof appointment.patientId === 'string' &&
-    typeof appointment.doctorId === 'string' &&
-    typeof appointment.serviceId === 'string' &&
-    typeof appointment.appointmentDate === 'string' &&
-    typeof appointment.startTime === 'string' &&
-    typeof appointment.endTime === 'string' &&
-    typeof appointment.status === 'string'
-  );
-}
-
-export function makeId(prefix: string): string {
-  const random =
-    typeof crypto !== 'undefined' && 'randomUUID' in crypto
-      ? crypto.randomUUID().slice(0, 8)
-      : Math.random().toString(36).slice(2, 10);
-  return `${prefix}-${random}`;
-}
-
 function createSeedData(): PersistedClinic {
   const today = todayIso();
-  const appointments: Appointment[] = [];
+  const tomorrow = addDays(today, 1);
+  const todayAt = (time: string) => time;
 
-  const place = (seed: SeedAppointment): void => {
-    let date = addDays(today, seed.minOffset);
-    for (let attempt = 0; attempt < 21; attempt += 1) {
-      const block = scheduleFor(seed.doctorId, date);
-      const service = serviceById(seed.serviceId);
-      const fitsHours = Boolean(
-        block && service && seed.startTime >= block.start &&
-          endTimeFor(seed.serviceId, seed.startTime) <= block.end,
-      );
-      const free = Boolean(
-        service &&
-          isSlotAvailable(appointments, {
-            doctorId: seed.doctorId,
-            date,
-            startTime: seed.startTime,
-            durationMinutes: service.durationMinutes,
-          }),
-      );
-      const valid = fitsHours && (seed.status === 'CANCELLED' ? true : free);
-      if (valid) {
-        break;
-      }
-      date = addDays(date, 1);
-    }
-
-    const patient = SEED_PATIENTS.find((item) => item.id === seed.patientId);
-    if (!patient) {
-      return;
-    }
-
-    appointments.push({
-      id: `seed-${seed.reference.toLowerCase()}`,
-      reference: seed.reference,
-      patientId: patient.id,
-      patientName: patient.name,
-      email: patient.email,
-      phone: patient.phone,
-      doctorId: seed.doctorId,
-      serviceId: seed.serviceId,
-      appointmentDate: date,
-      startTime: seed.startTime,
-      endTime: endTimeFor(seed.serviceId, seed.startTime),
-      reason: seed.reason,
-      status: seed.status,
-      createdByUserId: seed.createdByRole === 'PATIENT' ? patient.id : 'staff-reception',
-      createdByRole: seed.createdByRole,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    });
-  };
-
-  place({
-    patientId: 'p-ava',
-    doctorId: 'maya',
-    serviceId: 'preventive',
-    startTime: '09:00',
-    minOffset: 0,
-    status: 'COMPLETED',
-    reason: 'Sensitive lower left molar.',
-    createdByRole: 'PATIENT',
-    reference: 'LD-10482',
-  });
-  place({
-    patientId: 'p-noah',
-    doctorId: 'ada',
-    serviceId: 'aligners',
-    startTime: '10:30',
-    minOffset: 0,
-    status: 'CONFIRMED',
-    reason: 'Second aligner consultation — bring scan.',
-    createdByRole: 'RECEPTIONIST',
-    reference: 'LD-10517',
-  });
-  place({
-    patientId: 'p-grace',
-    doctorId: 'daniel',
-    serviceId: 'preventive',
-    startTime: '13:00',
-    minOffset: 0,
-    status: 'PENDING',
-    reason: 'Chipped front tooth, would like same-day repair.',
-    createdByRole: 'PATIENT',
-    reference: 'LD-10533',
-  });
-  place({
-    patientId: 'p-liam',
-    doctorId: 'daniel',
-    serviceId: 'whitening',
-    startTime: '15:00',
-    minOffset: 0,
-    status: 'CONFIRMED',
-    reason: 'Wedding in three weeks.',
-    createdByRole: 'PATIENT',
-    reference: 'LD-10541',
-  });
-  place({
-    patientId: 'p-sofia',
-    doctorId: 'daniel',
-    serviceId: 'children',
-    startTime: '09:30',
-    minOffset: 1,
-    status: 'CONFIRMED',
-    reason: 'First visit for age 4. Nervous — extra time please.',
-    createdByRole: 'RECEPTIONIST',
-    reference: 'LD-10552',
-  });
-  place({
-    patientId: 'p-ethan',
-    doctorId: 'ada',
-    serviceId: 'implants',
-    startTime: '11:00',
-    minOffset: 1,
-    status: 'PENDING',
-    reason: 'Missing upper right premolar.',
-    createdByRole: 'PATIENT',
-    reference: 'LD-10566',
-  });
-  place({
-    patientId: 'p-demo',
-    doctorId: 'ada',
-    serviceId: 'whitening',
-    startTime: '13:30',
-    minOffset: 1,
-    status: 'CONFIRMED',
-    reason: 'Coffee staining on front teeth; would like a brighter shade.',
-    createdByRole: 'PATIENT',
-    reference: 'LD-10569',
-  });
-  place({
-    patientId: 'p-mia',
-    doctorId: 'ada',
-    serviceId: 'veneers',
-    startTime: '14:00',
-    minOffset: 4,
-    status: 'PENDING',
-    reason: 'Interested in a digital smile preview.',
-    createdByRole: 'RECEPTIONIST',
-    reference: 'LD-10571',
-  });
-  place({
-    patientId: 'p-olivia',
-    doctorId: 'maya',
-    serviceId: 'aligners',
-    startTime: '10:00',
-    minOffset: 5,
-    status: 'CONFIRMED',
-    reason: 'Aligner progress check.',
-    createdByRole: 'PATIENT',
-    reference: 'LD-10584',
-  });
-  place({
-    patientId: 'p-jonah',
-    doctorId: 'daniel',
-    serviceId: 'preventive',
-    startTime: '11:30',
-    minOffset: 2,
-    status: 'CANCELLED',
-    reason: 'Rescheduling after half-term.',
-    createdByRole: 'PATIENT',
-    reference: 'LD-10529',
-  });
-
-  const jamie = SEED_PATIENTS.find((patient) => patient.id === 'p-demo');
-  if (jamie) {
-    appointments.push({
-      id: 'seed-history-jamie',
-      reference: 'LD-09842',
-      patientId: jamie.id,
-      patientName: jamie.name,
-      email: jamie.email,
-      phone: jamie.phone,
-      doctorId: 'daniel',
+  const appointments: Appointment[] = [
+    seedAppointment({
+      name: 'Ava Thompson',
+      email: 'ava.thompson@example.com',
+      phone: '(503) 555-0118',
       serviceId: 'preventive',
-      appointmentDate: addDays(today, -21),
-      startTime: '10:00',
-      endTime: endTimeFor('preventive', '10:00'),
-      reason: 'Routine check-up and hygiene visit.',
-      status: 'COMPLETED',
-      createdByUserId: jamie.id,
-      createdByRole: 'PATIENT',
-      createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 30).toISOString(),
-      updatedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 21).toISOString(),
-    });
-  }
+      dentistId: 'maya',
+      date: today,
+      time: todayAt('09:00'),
+      status: 'completed',
+      notes: 'Sensitive lower left molar.',
+      reference: 'LD-10482',
+    }),
+    seedAppointment({
+      name: 'Noah Patel',
+      email: 'noah.patel@example.com',
+      phone: '(503) 555-0173',
+      serviceId: 'aligners',
+      dentistId: 'ada',
+      date: today,
+      time: todayAt('10:30'),
+      status: 'confirmed',
+      notes: 'Second aligner consultation — bring scan.',
+      reference: 'LD-10517',
+    }),
+    seedAppointment({
+      name: 'Grace Kim',
+      email: 'grace.kim@example.com',
+      phone: '(503) 555-0140',
+      serviceId: 'preventive',
+      dentistId: 'daniel',
+      date: today,
+      time: todayAt('13:00'),
+      status: 'pending',
+      notes: 'Chipped front tooth, would like same-day repair.',
+      reference: 'LD-10533',
+    }),
+    seedAppointment({
+      name: 'Liam Rivera',
+      email: 'liam.rivera@example.com',
+      phone: '(503) 555-0126',
+      serviceId: 'whitening',
+      dentistId: 'ada',
+      date: today,
+      time: todayAt('15:30'),
+      status: 'confirmed',
+      notes: '',
+      reference: 'LD-10541',
+    }),
+    seedAppointment({
+      name: 'Sofia Alvarez',
+      email: 'sofia.alvarez@example.com',
+      phone: '(503) 555-0155',
+      serviceId: 'children',
+      dentistId: 'daniel',
+      date: tomorrow,
+      time: '09:30',
+      status: 'confirmed',
+      notes: 'First visit for age 4. Nervous — extra time please.',
+      reference: 'LD-10552',
+    }),
+    seedAppointment({
+      name: 'Ethan Brooks',
+      email: 'ethan.brooks@example.com',
+      phone: '(503) 555-0164',
+      serviceId: 'implants',
+      dentistId: 'ada',
+      date: tomorrow,
+      time: '11:00',
+      status: 'pending',
+      notes: 'Missing upper right premolar.',
+      reference: 'LD-10566',
+    }),
+    seedAppointment({
+      name: 'Mia Chen',
+      email: 'mia.chen@example.com',
+      phone: '(503) 555-0112',
+      serviceId: 'veneers',
+      dentistId: 'ada',
+      date: addDays(today, 4),
+      time: '14:00',
+      status: 'pending',
+      notes: 'Interested in a digital smile preview.',
+      reference: 'LD-10571',
+    }),
+    seedAppointment({
+      name: 'Olivia Grant',
+      email: 'olivia.grant@example.com',
+      phone: '(503) 555-0189',
+      serviceId: 'aligners',
+      dentistId: 'maya',
+      date: addDays(today, 5),
+      time: '10:00',
+      status: 'confirmed',
+      notes: 'Aligner progress check.',
+      reference: 'LD-10584',
+    }),
+    seedAppointment({
+      name: 'Jonah Weber',
+      email: 'jonah.weber@example.com',
+      phone: '(503) 555-0191',
+      serviceId: 'preventive',
+      dentistId: 'daniel',
+      date: addDays(today, 2),
+      time: '11:30',
+      status: 'cancelled',
+      notes: 'Rescheduling after half-term.',
+      reference: 'LD-10529',
+    }),
+  ];
 
   const messages: ClinicMessage[] = [
     {
@@ -572,15 +326,33 @@ function createSeedData(): PersistedClinic {
 }
 
 interface SeedAppointment {
-  patientId: string;
-  doctorId: string;
+  name: string;
+  email: string;
+  phone: string;
   serviceId: string;
-  startTime: string;
-  minOffset: number;
+  dentistId: string;
+  date: string;
+  time: string;
   status: AppointmentStatus;
-  reason: string;
-  createdByRole: 'PATIENT' | 'RECEPTIONIST' | 'DOCTOR';
+  notes: string;
   reference: string;
+}
+
+function seedAppointment(input: SeedAppointment): Appointment {
+  return {
+    id: `seed-${input.reference.toLowerCase()}`,
+    reference: input.reference,
+    patientName: input.name,
+    email: input.email,
+    phone: input.phone,
+    serviceId: input.serviceId,
+    dentistId: input.dentistId,
+    date: input.date,
+    time: input.time,
+    notes: input.notes,
+    status: input.status,
+    createdAt: new Date().toISOString(),
+  };
 }
 
 export function messageSourceLabel(source: MessageSource): string {

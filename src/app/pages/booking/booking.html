@@ -1,0 +1,450 @@
+<app-site-header />
+
+<main id="main-content" class="booking-page">
+  <div class="booking-hero">
+    <div class="container">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a routerLink="/">Home</a>
+        <app-icon name="chevron-down" [size]="13" class="breadcrumb__sep" />
+        <span aria-current="page">Book an appointment</span>
+      </nav>
+
+      <div class="booking-hero__grid">
+        <div>
+          <span class="eyebrow">Appointments</span>
+          <h1 class="display">Book your visit, <em>the easy way.</em></h1>
+          <p class="lead">
+            Choose a treatment, pick a clinician and a time that suits you. We will confirm by email
+            within one working hour.
+          </p>
+        </div>
+        <ul class="booking-hero__points">
+          <li><app-icon name="calendar" [size]="16" /> Same-week availability</li>
+          <li><app-icon name="shield" [size]="16" /> Insurance checked before you arrive</li>
+          <li><app-icon name="clock" [size]="16" /> Free cancellation up to 24h</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="container booking-layout" #wizard>
+    @if (confirmed(); as appointment) {
+      <section class="confirm-card" aria-labelledby="confirm-title">
+        <span class="confirm-card__mark"><app-icon name="check" [size]="34" /></span>
+        <span class="eyebrow eyebrow--plain">Appointment requested</span>
+        <h2 id="confirm-title" class="display">You're on the books.</h2>
+        <p class="confirm-card__lead">
+          Reference <strong>{{ appointment.reference }}</strong
+          >. We have emailed {{ appointment.email }} with the details and will confirm the clinician
+          shortly.
+        </p>
+
+        <dl class="confirm-card__details">
+          <div>
+            <dt>Treatment</dt>
+            <dd>{{ serviceName(appointment.serviceId) }}</dd>
+          </div>
+          <div>
+            <dt>Clinician</dt>
+            <dd>{{ dentistName(appointment.dentistId) }}</dd>
+          </div>
+          <div>
+            <dt>When</dt>
+            <dd>
+              {{ formatDateValue(appointment.date) }}<br />
+              {{ formatTimeValue(appointment.time) }}
+            </dd>
+          </div>
+          <div>
+            <dt>Where</dt>
+            <dd>2180 NW Quimby St, Suite 120, Portland</dd>
+          </div>
+        </dl>
+
+        <div class="confirm-card__next">
+          <h3>What happens next</h3>
+          <ol>
+            <li>Our coordinator confirms your clinician by email or text.</li>
+            <li>We check your insurance and send a written estimate before the visit.</li>
+            <li>Arrive five minutes early — the coffee is on us.</li>
+          </ol>
+        </div>
+
+        <div class="confirm-card__actions">
+          <a class="btn btn--primary" routerLink="/">
+            Back to the studio
+            <app-icon name="arrow-right" [size]="16" />
+          </a>
+          <button type="button" class="btn btn--outline" (click)="reset()">
+            Book another appointment
+          </button>
+        </div>
+        <p class="confirm-card__note">
+          Need to change something? Call
+          <a href="tel:+15035550142">(503) 555-0142</a> or use the care chat below.
+        </p>
+      </section>
+    } @else {
+      <section class="booking-card" aria-label="Appointment booking">
+        <ol class="stepper">
+          @for (item of steps; track item.number) {
+            <li
+              class="stepper__item"
+              [class.is-active]="step() === item.number"
+              [class.is-done]="step() > item.number"
+            >
+              <span class="stepper__number">
+                @if (step() > item.number) {
+                  <app-icon name="check" [size]="14" />
+                } @else {
+                  {{ item.number }}
+                }
+              </span>
+              <span class="stepper__label">{{ item.label }}</span>
+            </li>
+          }
+        </ol>
+
+        <div class="booking-card__body">
+          @if (step() === 1) {
+            <div class="step-panel">
+              <div class="step-head">
+                <span class="step-head__index">Step 1 of 3</span>
+                <h2>What brings you in?</h2>
+                <p>Not sure? Pick the closest option — we can adjust it on the day.</p>
+              </div>
+
+              <div class="choice-grid choice-grid--services">
+                @for (service of services; track service.id) {
+                  <label
+                    class="choice choice--service"
+                    [class.is-selected]="selectedService() === service.id"
+                  >
+                    <input
+                      type="radio"
+                      name="service"
+                      [value]="service.id"
+                      [checked]="selectedService() === service.id"
+                      (change)="selectService(service.id)"
+                    />
+                    <span class="choice__icon"><app-icon [name]="service.icon" [size]="20" /></span>
+                    <span class="choice__body">
+                      <span class="choice__title">
+                        {{ service.name }}
+                        @if (service.featured) {
+                          <span class="choice__tag">Popular</span>
+                        }
+                      </span>
+                      <span class="choice__text">{{ service.summary }}</span>
+                      <span class="choice__meta"
+                        >{{ service.duration }} · from {{ service.fromPrice }}</span
+                      >
+                    </span>
+                    <span class="choice__check"><app-icon name="check" [size]="12" /></span>
+                  </label>
+                }
+              </div>
+            </div>
+          }
+
+          @if (step() === 2) {
+            <div class="step-panel">
+              <div class="step-head">
+                <span class="step-head__index">Step 2 of 3</span>
+                <h2>Pick a time that suits you.</h2>
+                <p>All times are Pacific. Booked slots are unavailable.</p>
+              </div>
+
+              <fieldset class="booking-fieldset">
+                <legend>Clinician</legend>
+                <div class="choice-grid choice-grid--dentists">
+                  <label
+                    class="choice choice--dentist"
+                    [class.is-selected]="selectedDentist() === 'any'"
+                  >
+                    <input
+                      type="radio"
+                      name="dentist"
+                      value="any"
+                      [checked]="selectedDentist() === 'any'"
+                      (change)="selectDentist('any')"
+                    />
+                    <span class="choice__avatar choice__avatar--any">
+                      <app-icon name="users" [size]="20" />
+                    </span>
+                    <span class="choice__body">
+                      <span class="choice__title">First available</span>
+                      <span class="choice__text">We'll match you with the right clinician.</span>
+                    </span>
+                  </label>
+
+                  @for (dentist of dentists; track dentist.id) {
+                    <label
+                      class="choice choice--dentist"
+                      [class.is-selected]="selectedDentist() === dentist.id"
+                    >
+                      <input
+                        type="radio"
+                        name="dentist"
+                        [value]="dentist.id"
+                        [checked]="selectedDentist() === dentist.id"
+                        (change)="selectDentist(dentist.id)"
+                      />
+                      <img
+                        class="choice__avatar"
+                        [src]="dentist.image"
+                        alt=""
+                        width="42"
+                        height="42"
+                      />
+                      <span class="choice__body">
+                        <span class="choice__title">{{ dentist.name }}</span>
+                        <span class="choice__text"
+                          >{{ dentist.focus[0] }} · {{ dentist.years }} yrs</span
+                        >
+                      </span>
+                    </label>
+                  }
+                </div>
+              </fieldset>
+
+              <div class="booking-fieldset">
+                <span class="booking-legend">Date</span>
+                <div class="date-strip">
+                  @for (date of days(); track date) {
+                    <button
+                      type="button"
+                      class="date-chip"
+                      [class.is-selected]="selectedDate() === date"
+                      [class.is-empty]="slotCount(date) === 0"
+                      [attr.aria-pressed]="selectedDate() === date"
+                      [attr.aria-label]="
+                        relative(date) + ', ' + slotCount(date) + ' slots available'
+                      "
+                      (click)="selectDate(date)"
+                    >
+                      <span class="date-chip__day">{{ dayParts(date).weekday }}</span>
+                      <span class="date-chip__num">{{ dayParts(date).day }}</span>
+                      <span class="date-chip__month">{{ dayParts(date).month }}</span>
+                      <span class="date-chip__slots">
+                        {{ slotCount(date) === 0 ? 'Full' : slotCount(date) + ' free' }}
+                      </span>
+                    </button>
+                  }
+                </div>
+              </div>
+
+              <div class="booking-fieldset">
+                <span class="booking-legend">Time</span>
+                @if (selectedDate()) {
+                  <div class="slot-grid">
+                    @for (time of timesFor(selectedDate()!); track time) {
+                      <button
+                        type="button"
+                        class="slot"
+                        [class.is-selected]="selectedTime() === time"
+                        [class.is-disabled]="!isFree(selectedDate()!, time)"
+                        [disabled]="!isFree(selectedDate()!, time)"
+                        [attr.aria-pressed]="selectedTime() === time"
+                        (click)="selectTime(time)"
+                      >
+                        {{ formatTimeValue(time) }}
+                      </button>
+                    }
+                  </div>
+                  @if (slotCount(selectedDate()!) === 0) {
+                    <p class="slot-empty">
+                      <app-icon name="alert" [size]="15" />
+                      No times left with this clinician. Try another date or pick “First available”.
+                    </p>
+                  }
+                  <p class="slot-legend">
+                    <span><span class="slot-legend__dot"></span> Available</span>
+                    <span><span class="slot-legend__dot slot-legend__dot--off"></span> Booked</span>
+                  </p>
+                } @else {
+                  <p class="slot-prompt">
+                    <app-icon name="calendar" [size]="16" />
+                    Choose a date above to see available times.
+                  </p>
+                }
+              </div>
+            </div>
+          }
+
+          @if (step() === 3) {
+            <div class="step-panel">
+              <div class="step-head">
+                <span class="step-head__index">Step 3 of 3</span>
+                <h2>Who should we expect?</h2>
+                <p>Just the essentials. Your details stay private.</p>
+              </div>
+
+              <form class="booking-form" [formGroup]="form" (ngSubmit)="confirm()" novalidate>
+                <div class="form-grid">
+                  <div class="field">
+                    <label for="booking-name">Full name</label>
+                    <input
+                      id="booking-name"
+                      class="input"
+                      type="text"
+                      formControlName="patientName"
+                      autocomplete="name"
+                      placeholder="Jamie Rivera"
+                    />
+                    @if (form.controls.patientName.touched && form.controls.patientName.invalid) {
+                      <p class="error-text">Please enter your full name.</p>
+                    }
+                  </div>
+                  <div class="field">
+                    <label for="booking-phone">Phone</label>
+                    <input
+                      id="booking-phone"
+                      class="input"
+                      type="tel"
+                      formControlName="phone"
+                      autocomplete="tel"
+                      placeholder="(503) 555-0100"
+                    />
+                    @if (form.controls.phone.touched && form.controls.phone.invalid) {
+                      <p class="error-text">A contact number helps us confirm your visit.</p>
+                    }
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label for="booking-email">Email</label>
+                  <input
+                    id="booking-email"
+                    class="input"
+                    type="email"
+                    formControlName="email"
+                    autocomplete="email"
+                    placeholder="you@example.com"
+                  />
+                  @if (form.controls.email.touched && form.controls.email.invalid) {
+                    <p class="error-text">Enter a valid email for your confirmation.</p>
+                  }
+                </div>
+
+                <div class="field">
+                  <label for="booking-notes">
+                    Anything we should know? <span class="hint-text">(optional)</span>
+                  </label>
+                  <textarea
+                    id="booking-notes"
+                    class="textarea"
+                    formControlName="notes"
+                    placeholder="Nerves, accessibility needs, previous treatment, a preferred hygienist…"
+                  ></textarea>
+                </div>
+
+                <label class="checkbox consent">
+                  <input type="checkbox" formControlName="consent" />
+                  <span>
+                    I agree to the 24-hour cancellation policy and to Lumina contacting me about
+                    this appointment.
+                  </span>
+                </label>
+                @if (form.controls.consent.touched && form.controls.consent.invalid) {
+                  <p class="error-text consent-error">Please accept the cancellation policy.</p>
+                }
+
+                @if (bookingError()) {
+                  <p class="booking-error" role="alert">
+                    <app-icon name="alert" [size]="16" />
+                    {{ bookingError() }}
+                  </p>
+                }
+
+                <p class="booking-note">
+                  <app-icon name="shield" [size]="15" />
+                  No payment now. We verify insurance before your visit.
+                </p>
+
+                <button type="submit" class="btn btn--primary btn--block">
+                  Confirm appointment
+                  <app-icon name="arrow-right" [size]="17" />
+                </button>
+              </form>
+            </div>
+          }
+        </div>
+
+        <div class="booking-card__foot">
+          @if (step() > 1) {
+            <button type="button" class="btn btn--outline" (click)="back()">Back</button>
+          } @else {
+            <span></span>
+          }
+
+          @if (step() < 3) {
+            <button
+              type="button"
+              class="btn btn--primary"
+              [disabled]="!canContinue()"
+              (click)="next()"
+            >
+              Continue
+              <app-icon name="arrow-right" [size]="16" />
+            </button>
+          } @else {
+            <span class="booking-card__foot-note">
+              <app-icon name="clock" [size]="14" />
+              Confirmation within one working hour
+            </span>
+          }
+        </div>
+      </section>
+
+      <aside class="booking-summary" aria-label="Your visit summary">
+        <div class="booking-summary__card">
+          <span class="eyebrow">Your visit</span>
+          <dl>
+            <div>
+              <dt>Treatment</dt>
+              <dd>{{ chosenService()?.name ?? 'Not selected' }}</dd>
+            </div>
+            <div>
+              <dt>Clinician</dt>
+              <dd>{{ chosenDentistName() }}</dd>
+            </div>
+            <div>
+              <dt>Date</dt>
+              <dd>{{ summaryDate() }}</dd>
+            </div>
+            <div>
+              <dt>Time</dt>
+              <dd>{{ summaryTime() }}</dd>
+            </div>
+          </dl>
+
+          @if (chosenService(); as service) {
+            <div class="booking-summary__price">
+              <span>{{ service.duration }} appointment</span>
+              <strong>from {{ service.fromPrice }}</strong>
+            </div>
+          }
+
+          <ul class="booking-summary__assurances">
+            <li><app-icon name="check" [size]="13" /> Free cancellation up to 24h</li>
+            <li><app-icon name="check" [size]="13" /> Written estimate before treatment</li>
+            <li><app-icon name="check" [size]="13" /> Insurance verified in advance</li>
+          </ul>
+        </div>
+
+        <div class="booking-summary__help">
+          <span class="booking-summary__help-icon"><app-icon name="chat" [size]="18" /></span>
+          <div>
+            <strong>Need a hand?</strong>
+            <p>Our care team can book for you.</p>
+            <a href="tel:+15035550142">(503) 555-0142</a>
+          </div>
+        </div>
+      </aside>
+    }
+  </div>
+</main>
+
+<app-site-footer />
+<app-support-widget />

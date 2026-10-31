@@ -1,0 +1,55 @@
+<section id="why-us" class="section why" aria-labelledby="why-title">
+  <div class="why__backdrop" aria-hidden="true">
+    <span class="why__glow why__glow--a" [appParallax]="0.08"></span>
+    <span class="why__glow why__glow--b" [appParallax]="-0.06"></span>
+    <span class="why__ring why__ring--a"></span>
+    <span class="why__ring why__ring--b"></span>
+  </div>
+
+  <div class="container">
+    <div class="why__head" appReveal>
+      <span class="eyebrow eyebrow--light">Why choose us</span>
+      <h2 id="why-title" class="section-title">
+        Five reasons patients <em>stay with Lumina.</em>
+      </h2>
+      <p class="lead">
+        Skilled clinicians, precise technology and a genuinely comfortable experience, at a price
+        that is clear before you commit.
+      </p>
+    </div>
+
+    <ul class="why__grid">
+      @for (reason of reasons; track reason.id; let index = $index) {
+        <li
+          class="why__cell"
+          [class.why__cell--technology]="reason.id === 'technology'"
+          appReveal
+          [revealDelay]="index * 80"
+        >
+          <article class="why-card tilt-card" appTilt [tiltMax]="6">
+            @if (reason.id === 'technology') {
+              <div class="why-card__photo">
+                <img
+                  src="images/hero-treatment.jpg"
+                  alt="A Lumina dentist talking a patient through their digital X-ray in the treatment room"
+                  width="1200"
+                  height="1400"
+                  loading="lazy"
+                />
+              </div>
+            }
+
+            <div class="why-card__body">
+              <span class="why-card__icon"><app-icon [name]="reason.icon" [size]="24" /></span>
+              @if (reason.stat) {
+                <span class="why-card__stat">{{ reason.stat }}</span>
+              }
+              <h3>{{ reason.title }}</h3>
+              <p>{{ reason.text }}</p>
+            </div>
+          </article>
+        </li>
+      }
+    </ul>
+  </div>
+</section>

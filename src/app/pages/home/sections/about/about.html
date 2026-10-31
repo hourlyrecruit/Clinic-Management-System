@@ -1,0 +1,99 @@
+<section id="about" class="section section--white about" aria-labelledby="about-title">
+  <div class="container about__grid">
+    <div class="about__media">
+      <span class="about__ring" aria-hidden="true" [appParallax]="0.08"></span>
+
+      <div class="about__layer about__layer--main" [appParallax]="0.04">
+        <figure class="about__frame" appReveal>
+          <img
+            src="images/clinic-room.jpg"
+            alt="Lumina's bright treatment room with a modern dental chair, teal cabinetry and natural light"
+            width="1200"
+            height="900"
+            loading="lazy"
+          />
+        </figure>
+      </div>
+
+      <div class="about__layer about__layer--second" [appParallax]="-0.05">
+        <figure class="about__frame about__frame--second" appReveal [revealDelay]="160">
+          <div class="about__float">
+            <img
+              src="images/consultation-xray.jpg"
+              alt="A clinician reviewing dental X-rays with a colleague before a consultation"
+              width="1200"
+              height="900"
+              loading="lazy"
+            />
+          </div>
+        </figure>
+      </div>
+
+      <div class="about__badge glass" appReveal [revealDelay]="260">
+        <span class="about__badge-icon"><app-icon name="tooth" [size]="22" /></span>
+        <div>
+          <strong>Est. {{ clinic.established }}</strong>
+          <span>NW Portland · {{ clinic.patientCount }} patients</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="about__copy">
+      <div class="about__intro" appReveal [revealDelay]="80">
+        <span class="eyebrow">About our clinic</span>
+        <h2 id="about-title" class="section-title">
+          Dental care designed <em>around you.</em>
+        </h2>
+        <p class="lead">
+          Lumina is a calm, modern dental studio built on one idea: nobody should dread the dentist.
+          Natural light, quiet rooms and clinicians who explain everything make every visit feel
+          unhurried.
+        </p>
+      </div>
+
+      <ul class="about__pillars">
+        @for (pillar of pillars; track pillar.title; let index = $index) {
+          <li appReveal [revealDelay]="120 + index * 90">
+            <div class="about-card tilt-card" appTilt [tiltMax]="6">
+              <span class="about-card__icon"><app-icon [name]="pillar.icon" [size]="22" /></span>
+              <h3>{{ pillar.title }}</h3>
+              <p>{{ pillar.text }}</p>
+            </div>
+          </li>
+        }
+      </ul>
+
+      <dl class="about__stats" appReveal [revealDelay]="200">
+        @for (stat of stats; track stat.label) {
+          <div class="about__stat">
+            <dt>{{ stat.label }}</dt>
+            <dd>
+              <span
+                appCountUp
+                [countTo]="stat.value"
+                [countDecimals]="stat.decimals ?? 0"
+                [countSuffix]="stat.suffix ?? ''"
+              ></span>
+            </dd>
+          </div>
+        }
+      </dl>
+
+      <ul class="about__amenities" aria-label="Clinic amenities" appReveal [revealDelay]="240">
+        @for (amenity of amenities; track amenity) {
+          <li><app-icon name="check" [size]="13" /> {{ amenity }}</li>
+        }
+      </ul>
+
+      <div class="about__actions" appReveal [revealDelay]="280">
+        <a class="btn btn--primary" [routerLink]="['/']" fragment="doctors">
+          Meet our doctors
+          <app-icon name="arrow-right" [size]="17" />
+        </a>
+        <button type="button" class="btn btn--outline" (click)="requestConsultation.emit()">
+          Free 15-min consultation
+        </button>
+      </div>
+    </div>
+  </div>
+</section>

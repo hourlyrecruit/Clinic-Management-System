@@ -5,12 +5,13 @@ import { SupportWidget } from '../../layout/support-widget/support-widget';
 import { ConsultationDialog } from '../../shared/consultation-dialog/consultation-dialog';
 import { HeroSection } from './sections/hero/hero';
 import { ServicesSection } from './sections/services/services';
-import { ConsultationSection } from './sections/consultation/consultation';
+import { AboutSection } from './sections/about/about';
+import { WhyUsSection } from './sections/why-us/why-us';
+import { AppointmentSection } from './sections/appointment/appointment';
+import { ContactSection } from './sections/contact/contact';
 import { TeamSection } from './sections/team/team';
-import { ClinicSection } from './sections/clinic/clinic';
 import { TestimonialsSection } from './sections/testimonials/testimonials';
 import { FaqSection } from './sections/faq/faq';
-import { CtaSection } from './sections/cta/cta';
 
 @Component({
   selector: 'app-home-page',
@@ -21,12 +22,13 @@ import { CtaSection } from './sections/cta/cta';
     ConsultationDialog,
     HeroSection,
     ServicesSection,
-    ConsultationSection,
+    AboutSection,
+    WhyUsSection,
+    AppointmentSection,
+    ContactSection,
     TeamSection,
-    ClinicSection,
     TestimonialsSection,
     FaqSection,
-    CtaSection,
   ],
   templateUrl: './home.html',
   styleUrl: './home.css',

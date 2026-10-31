@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { CLINIC, HOURS, SERVICES } from '../../core/clinic-data';
+import { CLINIC, HOURS, SERVICES, SOCIAL_LINKS } from '../../core/clinic-data';
 import { Icon } from '../../shared/icon';
 
 @Component({
@@ -14,12 +14,15 @@ export class SiteFooter {
   protected readonly clinic = CLINIC;
   protected readonly hours = HOURS;
   protected readonly services = SERVICES;
+  protected readonly social = SOCIAL_LINKS;
   protected readonly explore = [
-    { label: 'Treatments', fragment: 'treatments' },
-    { label: 'Our dentists', fragment: 'dentists' },
-    { label: 'The clinic', fragment: 'clinic' },
+    { label: 'Home', fragment: 'home' },
+    { label: 'About Us', fragment: 'about' },
+    { label: 'Services', fragment: 'services' },
+    { label: 'Doctors', fragment: 'doctors' },
     { label: 'Reviews', fragment: 'reviews' },
     { label: 'FAQs', fragment: 'faqs' },
+    { label: 'Contact', fragment: 'contact' },
   ] as const;
   protected readonly year = new Date().getFullYear();
 }

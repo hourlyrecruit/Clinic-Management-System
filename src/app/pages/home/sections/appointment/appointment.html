@@ -1,0 +1,172 @@
+<section id="appointment" class="section appointment" aria-labelledby="appointment-title">
+  <div class="appointment__backdrop" aria-hidden="true">
+    <span class="appointment__blob appointment__blob--a" [appParallax]="0.08"></span>
+    <span class="appointment__blob appointment__blob--b" [appParallax]="-0.06"></span>
+  </div>
+
+  <div class="container appointment__grid">
+    <div class="appointment__panel" appReveal>
+      <span class="appointment__stage" aria-hidden="true">
+        <span class="appointment__orbit"></span>
+        <span class="appointment__tooth"><app-icon name="tooth" [size]="86" /></span>
+      </span>
+
+      <span class="eyebrow eyebrow--light">Appointment booking</span>
+      <h2 id="appointment-title" class="section-title">
+        Book your visit <em>in under a minute.</em>
+      </h2>
+      <p class="appointment__lead">
+        Tell us what you need and when suits you. Our care team will reply within one working day to
+        confirm a time with the right clinician.
+      </p>
+
+      <ul class="appointment__benefits">
+        <li><app-icon name="check" [size]="15" /> Same-week appointments available</li>
+        <li><app-icon name="check" [size]="15" /> Written estimate before any treatment</li>
+        <li><app-icon name="check" [size]="15" /> Insurance verified before you arrive</li>
+      </ul>
+
+      <div class="appointment__contact">
+        <a [href]="clinic.phoneHref">
+          <app-icon name="phone" [size]="16" />
+          {{ clinic.phoneDisplay }}
+        </a>
+        <button type="button" (click)="requestConsultation.emit()">
+          Or request a free consultation
+          <app-icon name="arrow-right" [size]="15" />
+        </button>
+      </div>
+    </div>
+
+    <div class="appointment__card" appReveal [revealDelay]="120">
+      @if (confirmation(); as sent) {
+        <div class="appointment__success" role="status">
+          <span class="appointment__success-icon"><app-icon name="check" [size]="30" /></span>
+          <h3>Thank you, {{ sent.name }}!</h3>
+          <p>
+            We have your request for <strong>{{ sent.serviceName }}</strong> on
+            <strong>{{ sent.dateLabel }}</strong>. A member of our team will be in touch within one
+            working day to confirm your time.
+          </p>
+          <div class="appointment__success-actions">
+            <a
+              class="btn btn--primary"
+              routerLink="/book"
+              [queryParams]="{ service: sent.serviceId }"
+            >
+              Choose an exact time
+              <app-icon name="arrow-right" [size]="17" />
+            </a>
+            <button type="button" class="btn btn--outline" (click)="reset()">
+              Send another request
+            </button>
+          </div>
+        </div>
+      } @else {
+        <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+          <div class="appointment__head">
+            <h3>Request an appointment</h3>
+            <p>All fields are required. No payment needed.</p>
+          </div>
+
+          <div class="appointment__fields">
+            <div class="field">
+              <label for="appt-name">Patient name</label>
+              <input
+                id="appt-name"
+                class="input"
+                type="text"
+                formControlName="name"
+                autocomplete="name"
+                placeholder="Jane Doe"
+                [attr.aria-invalid]="invalid('name')"
+                [attr.aria-describedby]="invalid('name') ? 'appt-name-error' : null"
+              />
+              @if (invalid('name')) {
+                <span id="appt-name-error" class="error-text">Please enter your full name.</span>
+              }
+            </div>
+
+            <div class="field">
+              <label for="appt-phone">Phone number</label>
+              <input
+                id="appt-phone"
+                class="input"
+                type="tel"
+                formControlName="phone"
+                autocomplete="tel"
+                placeholder="(503) 555-0100"
+                [attr.aria-invalid]="invalid('phone')"
+                [attr.aria-describedby]="invalid('phone') ? 'appt-phone-error' : null"
+              />
+              @if (invalid('phone')) {
+                <span id="appt-phone-error" class="error-text">Please enter a valid phone number.</span>
+              }
+            </div>
+
+            <div class="field field--wide">
+              <label for="appt-email">Email address</label>
+              <input
+                id="appt-email"
+                class="input"
+                type="email"
+                formControlName="email"
+                autocomplete="email"
+                placeholder="jane@example.com"
+                [attr.aria-invalid]="invalid('email')"
+                [attr.aria-describedby]="invalid('email') ? 'appt-email-error' : null"
+              />
+              @if (invalid('email')) {
+                <span id="appt-email-error" class="error-text">Please enter a valid email address.</span>
+              }
+            </div>
+
+            <div class="field">
+              <label for="appt-service">Service</label>
+              <select
+                id="appt-service"
+                class="select"
+                formControlName="serviceId"
+                [attr.aria-invalid]="invalid('serviceId')"
+                [attr.aria-describedby]="invalid('serviceId') ? 'appt-service-error' : null"
+              >
+                <option value="" disabled>Select a treatment</option>
+                @for (service of services; track service.id) {
+                  <option [value]="service.id">{{ service.name }}</option>
+                }
+              </select>
+              @if (invalid('serviceId')) {
+                <span id="appt-service-error" class="error-text">Please choose a service.</span>
+              }
+            </div>
+
+            <div class="field">
+              <label for="appt-date">Preferred date</label>
+              <input
+                id="appt-date"
+                class="input"
+                type="date"
+                formControlName="date"
+                [attr.min]="minDate"
+                [attr.aria-invalid]="invalid('date')"
+                [attr.aria-describedby]="invalid('date') ? 'appt-date-error' : null"
+              />
+              @if (invalid('date')) {
+                <span id="appt-date-error" class="error-text">{{ dateMessage() }}</span>
+              }
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn--primary btn--block appointment__submit">
+            Request my appointment
+            <app-icon name="send" [size]="17" />
+          </button>
+          <p class="appointment__legal">
+            We only use your details to arrange your visit. For emergencies, call
+            <a [href]="clinic.emergencyPhoneHref">{{ clinic.emergencyPhoneDisplay }}</a>.
+          </p>
+        </form>
+      }
+    </div>
+  </div>
+</section>

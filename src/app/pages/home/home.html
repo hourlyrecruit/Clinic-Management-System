@@ -1,14 +1,15 @@
 <app-site-header />
 
 <main id="main-content">
-  <app-hero-section (requestConsultation)="consultationOpen.set(true)" />
+  <app-hero-section />
+  <app-about-section (requestConsultation)="consultationOpen.set(true)" />
   <app-services-section />
-  <app-consultation-section (requestConsultation)="consultationOpen.set(true)" />
+  <app-why-us-section />
   <app-team-section />
-  <app-clinic-section />
   <app-testimonials-section />
   <app-faq-section />
-  <app-cta-section (requestConsultation)="consultationOpen.set(true)" />
+  <app-appointment-section (requestConsultation)="consultationOpen.set(true)" />
+  <app-contact-section />
 </main>
 
 <app-site-footer />

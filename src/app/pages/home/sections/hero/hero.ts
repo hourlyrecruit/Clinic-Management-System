@@ -1,9 +1,19 @@
-import { ChangeDetectionStrategy, Component, computed, inject, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { CLINIC, DENTISTS } from '../../../../core/clinic-data';
+import { CLINIC, DENTISTS, TIME_SLOTS } from '../../../../core/clinic-data';
 import { ClinicStore } from '../../../../core/clinic-store';
-import { addDays, formatTime, relativeDay, todayIso } from '../../../../core/date.utils';
+import {
+  addDays,
+  formatTime,
+  isClosed,
+  isPastSlot,
+  relativeDay,
+  slotsForDate,
+  todayIso,
+} from '../../../../core/date.utils';
+import { ParallaxDirective } from '../../../../core/parallax.directive';
 import { RevealDirective } from '../../../../core/reveal.directive';
+import { DentalScene } from '../../../../shared/dental-scene/dental-scene';
 import { Icon } from '../../../../shared/icon';
 
 interface Opening {
@@ -13,14 +23,12 @@ interface Opening {
 
 @Component({
   selector: 'app-hero-section',
-  imports: [RouterLink, Icon, RevealDirective],
+  imports: [RouterLink, Icon, RevealDirective, ParallaxDirective, DentalScene],
   templateUrl: './hero.html',
   styleUrl: './hero.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeroSection {
-  readonly requestConsultation = output<void>();
-
   protected readonly clinic = CLINIC;
   protected readonly dentists = DENTISTS;
 
@@ -30,12 +38,15 @@ export class HeroSection {
     const today = todayIso();
     for (let offset = 0; offset < 14; offset++) {
       const date = addDays(today, offset);
-      for (const dentist of DENTISTS) {
-        const slot = this.store
-          .availableSlots(dentist.id, date, 'preventive')
-          .find((item) => item.available);
-        if (slot) {
-          return { day: relativeDay(date), time: formatTime(slot.startTime) };
+      if (isClosed(date)) {
+        continue;
+      }
+      for (const slot of slotsForDate(date, TIME_SLOTS)) {
+        if (isPastSlot(date, slot)) {
+          continue;
+        }
+        if (this.store.hasOpenSlot(date, slot)) {
+          return { day: relativeDay(date), time: formatTime(slot) };
         }
       }
     }

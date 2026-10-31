@@ -1,9 +1,9 @@
-<section id="dentists" class="section team" aria-labelledby="team-title">
+<section id="doctors" class="section section--white team" aria-labelledby="team-title">
   <div class="container">
     <div class="section-head">
       <div class="section-head__copy" appReveal>
-        <span class="eyebrow">The clinicians</span>
-        <h2 id="team-title" class="section-title">Clinicians who <em>actually listen.</em></h2>
+        <span class="eyebrow">Our doctors</span>
+        <h2 id="team-title" class="section-title">Meet the clinicians who <em>actually listen.</em></h2>
       </div>
       <p class="team__aside" appReveal [revealDelay]="90">
         Three dentists, one shared approach: explain everything, rush nothing, and only recommend
@@ -11,45 +11,58 @@
       </p>
     </div>
 
-    <div class="team__grid">
+    <ul class="team__grid">
       @for (dentist of dentists; track dentist.id; let index = $index) {
-        <article class="team-card" appReveal [revealDelay]="index * 90">
-          <div class="team-card__media">
-            <img
-              [src]="dentist.image"
-              [alt]="'Portrait of ' + dentist.name"
-              width="760"
-              height="900"
-              loading="lazy"
-            />
-            <span class="team-card__badge">Accepting patients</span>
-          </div>
-
-          <div class="team-card__body">
-            <h3>{{ dentist.name }}</h3>
-            <p class="team-card__role">{{ dentist.role }}</p>
-            <p class="team-card__bio">{{ dentist.bio }}</p>
-
-            <ul class="team-card__focus" aria-label="Focus areas">
-              @for (focus of dentist.focus; track focus) {
-                <li>{{ focus }}</li>
-              }
-            </ul>
-
-            <div class="team-card__foot">
-              <span class="team-card__years">
-                <app-icon name="star" [size]="13" />
-                {{ dentist.years }} yrs
+        <li appReveal [revealDelay]="index * 100">
+          <article class="team-card tilt-card" appTilt [tiltMax]="6">
+            <div class="team-card__media">
+              <img
+                [src]="dentist.image"
+                [alt]="'Portrait of ' + dentist.name"
+                width="760"
+                height="900"
+                loading="lazy"
+              />
+              <span class="team-card__badge">
+                <span class="team-card__dot" aria-hidden="true"></span>
+                {{ dentist.availability }}
               </span>
-              <a class="text-link" routerLink="/book" [queryParams]="{ dentist: dentist.id }">
-                Book with {{ dentist.name.split(' ')[1] }}
-                <app-icon name="arrow-right" [size]="15" />
+              <a
+                class="team-card__quick btn btn--light btn--sm"
+                routerLink="/book"
+                [queryParams]="{ dentist: dentist.id }"
+              >
+                Book now
+                <app-icon name="arrow-up-right" [size]="14" />
               </a>
             </div>
-          </div>
-        </article>
+
+            <div class="team-card__body">
+              <h3>{{ dentist.name }}</h3>
+              <p class="team-card__role">{{ dentist.role }}</p>
+              <p class="team-card__bio">{{ dentist.bio }}</p>
+
+              <ul class="team-card__focus" aria-label="Focus areas">
+                @for (focus of dentist.focus; track focus) {
+                  <li>{{ focus }}</li>
+                }
+              </ul>
+
+              <div class="team-card__foot">
+                <span class="team-card__years">
+                  <app-icon name="award" [size]="15" />
+                  {{ dentist.years }} years' experience
+                </span>
+                <a class="text-link" routerLink="/book" [queryParams]="{ dentist: dentist.id }">
+                  Book with {{ dentist.name.split(' ')[1] }}
+                  <app-icon name="arrow-right" [size]="15" />
+                </a>
+              </div>
+            </div>
+          </article>
+        </li>
       }
-    </div>
+    </ul>
 
     <p class="team__note" appReveal>
       <app-icon name="users" [size]="17" />

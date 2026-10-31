@@ -1,15 +1,18 @@
-<section id="treatments" class="section section--tint" aria-labelledby="treatments-title">
+<section id="services" class="section section--aqua services" aria-labelledby="services-title">
+  <span class="services__orb services__orb--a orb" aria-hidden="true" [appParallax]="0.1"></span>
+  <span class="services__orb services__orb--b orb" aria-hidden="true" [appParallax]="-0.08"></span>
+
   <div class="container">
     <div class="section-head">
       <div class="section-head__copy" appReveal>
-        <span class="eyebrow">Treatments</span>
-        <h2 id="treatments-title" class="section-title">
-          Everything your smile needs — <em>nothing it doesn’t.</em>
+        <span class="eyebrow">Dental services</span>
+        <h2 id="services-title" class="section-title">
+          Everything your smile needs, <em>beautifully done.</em>
         </h2>
       </div>
       <div class="services__aside" appReveal [revealDelay]="90">
         <p>
-          From a first check-up to a full rebuild, every plan starts with a conversation and a
+          From a first check-up to a full smile rebuild, every plan starts with a conversation and a
           written estimate.
         </p>
         <button type="button" class="text-link" (click)="support.open('Treatment options')">
@@ -19,52 +22,58 @@
       </div>
     </div>
 
-    <div class="services__grid">
+    <ul class="services__grid">
       @for (service of services; track service.id; let index = $index) {
-        <article
-          class="service-card"
-          [class.service-card--featured]="service.featured"
-          appReveal
-          [revealDelay]="index * 70"
-        >
-          <div class="service-card__top">
-            <span class="service-card__icon">
-              <app-icon [name]="service.icon" [size]="22" />
+        <li appReveal [revealDelay]="index * 70">
+          <article
+            class="service-card tilt-card"
+            [class.service-card--featured]="service.featured"
+            appTilt
+            [tiltMax]="8"
+          >
+            <span class="service-card__mark" aria-hidden="true">
+              <app-icon [name]="service.icon" [size]="150" />
             </span>
-            @if (service.featured) {
-              <span class="service-card__flag">Most requested</span>
-            }
-          </div>
 
-          <h3>{{ service.name }}</h3>
-          <p>{{ service.summary }}</p>
+            <div class="service-card__top">
+              <span class="service-card__icon">
+                <app-icon [name]="service.icon" [size]="26" />
+              </span>
+              @if (service.featured) {
+                <span class="service-card__flag">Most requested</span>
+              }
+            </div>
 
-          <ul class="service-card__points">
-            @for (point of service.highlights; track point) {
-              <li>
-                <app-icon name="check" [size]="13" />
-                {{ point }}
-              </li>
-            }
-          </ul>
+            <h3>{{ service.name }}</h3>
+            <p>{{ service.summary }}</p>
 
-          <div class="service-card__foot">
-            <span class="service-card__meta">
-              <app-icon name="clock" [size]="14" />
-              {{ service.duration }} · from {{ service.fromPrice }}
-            </span>
-            <a
-              class="service-card__cta"
-              routerLink="/book"
-              [queryParams]="{ service: service.id }"
-              [attr.aria-label]="'Book ' + service.name"
-            >
-              <app-icon name="arrow-up-right" [size]="16" />
-            </a>
-          </div>
-        </article>
+            <ul class="service-card__points">
+              @for (point of service.highlights; track point) {
+                <li>
+                  <app-icon name="check" [size]="13" />
+                  {{ point }}
+                </li>
+              }
+            </ul>
+
+            <div class="service-card__foot">
+              <span class="service-card__meta">
+                <app-icon name="clock" [size]="14" />
+                {{ service.duration }} · from {{ service.fromPrice }}
+              </span>
+              <a
+                class="service-card__cta"
+                routerLink="/book"
+                [queryParams]="{ service: service.id }"
+                [attr.aria-label]="'Book ' + service.name"
+              >
+                <app-icon name="arrow-up-right" [size]="16" />
+              </a>
+            </div>
+          </article>
+        </li>
       }
-    </div>
+    </ul>
 
     <div class="services__note" appReveal>
       <app-icon name="shield" [size]="18" />

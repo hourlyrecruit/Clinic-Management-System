@@ -1,8 +1,25 @@
-<section class="hero" aria-labelledby="hero-title">
+<section id="home" class="hero" aria-labelledby="hero-title">
   <div class="hero__backdrop" aria-hidden="true">
+    <span class="hero__mesh"></span>
     <span class="hero__grid"></span>
-    <span class="orb hero__orb"></span>
-    <span class="hero__ring"></span>
+    <span class="hero__blob hero__blob--a" [appParallax]="0.1"></span>
+    <span class="hero__blob hero__blob--b" [appParallax]="-0.07"></span>
+    <span class="hero__bubble hero__bubble--1"></span>
+    <span class="hero__bubble hero__bubble--2"></span>
+    <span class="hero__bubble hero__bubble--3"></span>
+    <span class="hero__bubble hero__bubble--4"></span>
+  </div>
+
+  <app-dental-scene class="hero__scene" />
+  <span class="hero__shade" aria-hidden="true"></span>
+
+  <div class="hero__hud" aria-hidden="true">
+    <span class="hud hud--tl"><i></i> LUMINA · DENTAL SCAN 01</span>
+    <span class="hud hud--tr">ENAMEL 98.4% · SCAN ACTIVE</span>
+    <span class="hud hud--bl">ADVANCED IMAGING — PRECISION CARE — PAINLESS TREATMENT</span>
+    <span class="hud hud--br">MOVE YOUR MOUSE TO EXPLORE · CLICK FOR A SHOCKWAVE</span>
+    <span class="hud-line hud-line--v"></span>
+    <span class="hud-line hud-line--h"></span>
   </div>
 
   <div class="container hero__inner">
@@ -12,23 +29,25 @@
         Portland · New patients welcome
       </span>
 
-      <h1 id="hero-title" class="display" appReveal [revealDelay]="60">
-        A calmer kind of <em>dental care.</em>
+      <h1 id="hero-title" class="display hero__title" appReveal [revealDelay]="60">
+        <span class="word" style="--i: 0">Your</span>
+        <span class="word" style="--i: 1">Smile,</span>
+        <em><span class="word" style="--i: 2">Our</span> <span class="word" style="--i: 3">Priority</span></em>
       </h1>
 
-      <p class="lead" appReveal [revealDelay]="120">
-        Thoughtful, unhurried dentistry — from routine check-ups to complete smile makeovers —
-        delivered by people who treat you like a person, not an appointment.
+      <p class="lead hero__lead" appReveal [revealDelay]="120">
+        Experience advanced dental care with expert doctors and modern technology.
       </p>
 
       <div class="hero__actions" appReveal [revealDelay]="180">
-        <a class="btn btn--primary" routerLink="/book">
-          Book an appointment
+        <a class="btn btn--primary btn--shine" routerLink="/book">
+          Book an Appointment
           <app-icon name="arrow-right" [size]="17" />
         </a>
-        <button class="btn btn--outline" type="button" (click)="requestConsultation.emit()">
-          Free 15-min consultation
-        </button>
+        <a class="btn btn--glass" [routerLink]="['/']" fragment="services">
+          Explore Our Services
+          <app-icon name="chevron-down" [size]="17" />
+        </a>
       </div>
 
       <div class="hero__proof" appReveal [revealDelay]="240">
@@ -52,21 +71,7 @@
       </div>
     </div>
 
-    <div class="hero__media" appReveal [revealDelay]="160">
-      <figure class="hero__photo">
-        <img
-          src="images/hero-treatment.jpg"
-          alt="A Lumina dentist talking a patient through their digital X-ray in the treatment room"
-          width="1200"
-          height="1400"
-          fetchpriority="high"
-        />
-        <figcaption class="hero__photo-caption">
-          <app-icon name="shield" [size]="16" />
-          Low-dose digital imaging, explained as we go
-        </figcaption>
-      </figure>
-
+    <div class="hero__stage" appReveal [revealDelay]="140">
       <div class="float-card float-card--opening">
         <span class="float-card__icon"><app-icon name="calendar" [size]="18" /></span>
         <div>
@@ -85,8 +90,8 @@
         <span class="float-card__badge">Accepting</span>
       </div>
 
-      <div class="hero__seal" aria-label="Rated 4.9 out of 5 by patients">
-        <span class="hero__seal-stars">
+      <div class="hero__seal" role="img" aria-label="Rated 4.9 out of 5 by patients">
+        <span class="hero__seal-stars" aria-hidden="true">
           @for (star of [1, 2, 3, 4, 5]; track star) {
             <app-icon name="star" [size]="11" />
           }
@@ -111,4 +116,8 @@
       ADA member practice · 0% finance available
     </span>
   </div>
+
+  <svg class="hero__wave" viewBox="0 0 1440 90" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0 48c180 40 360 40 540 8s360-48 540-20 270 40 360 26V90H0Z" />
+  </svg>
 </section>

@@ -1,0 +1,105 @@
+<section id="contact" class="section section--white contact" aria-labelledby="contact-title">
+  <div class="container">
+    <div class="section-head">
+      <div class="section-head__copy" appReveal>
+        <span class="eyebrow">Contact us</span>
+        <h2 id="contact-title" class="section-title">Come and <em>say hello.</em></h2>
+      </div>
+      <p class="contact__aside" appReveal [revealDelay]="90">
+        Visit the studio, call the care team or send a message. We reply within one working day.
+      </p>
+    </div>
+
+    <div class="contact__grid">
+      <ul class="contact__cards">
+        <li appReveal>
+          <a class="contact-card tilt-card" appTilt [tiltMax]="5" [href]="clinic.mapsUrl" target="_blank" rel="noopener">
+            <span class="contact-card__icon"><app-icon name="pin" [size]="22" /></span>
+            <div>
+              <h3>Clinic address</h3>
+              <p>{{ clinic.addressLine1 }}<br />{{ clinic.addressLine2 }}</p>
+            </div>
+          </a>
+        </li>
+        <li appReveal [revealDelay]="70">
+          <a class="contact-card tilt-card" appTilt [tiltMax]="5" [href]="clinic.phoneHref">
+            <span class="contact-card__icon"><app-icon name="phone" [size]="22" /></span>
+            <div>
+              <h3>Phone</h3>
+              <p>{{ clinic.phoneDisplay }}<br />Emergency: {{ clinic.emergencyPhoneDisplay }}</p>
+            </div>
+          </a>
+        </li>
+        <li appReveal [revealDelay]="140">
+          <a class="contact-card tilt-card" appTilt [tiltMax]="5" [href]="'mailto:' + clinic.email">
+            <span class="contact-card__icon"><app-icon name="mail" [size]="22" /></span>
+            <div>
+              <h3>Email</h3>
+              <p>{{ clinic.email }}</p>
+            </div>
+          </a>
+        </li>
+        <li appReveal [revealDelay]="210">
+          <div class="contact-card contact-card--hours">
+            <span class="contact-card__icon"><app-icon name="clock" [size]="22" /></span>
+            <div>
+              <h3>Opening hours</h3>
+              <ul class="contact__hours">
+                @for (row of hours; track row.day) {
+                  <li>
+                    <span>{{ row.day }}</span>
+                    <span>{{ row.time }}</span>
+                  </li>
+                }
+              </ul>
+            </div>
+          </div>
+        </li>
+      </ul>
+
+      <div class="contact__map" appReveal [revealDelay]="120">
+        @if (mapLoaded()) {
+          <iframe
+            class="contact__frame"
+            title="Map showing the location of Lumina Dental Studio"
+            [src]="mapSrc()"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            allowfullscreen
+          ></iframe>
+        } @else {
+          <div class="map-placeholder">
+            <svg class="map-placeholder__art" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+              <rect width="400" height="300" fill="#e3f4f2" />
+              <path d="M0 210c60-30 110 20 190-10s130-70 210-40v140H0Z" fill="#cdebf1" />
+              <g stroke="#fff" stroke-width="10" fill="none" stroke-linecap="round">
+                <path d="M-10 90h420M-10 190h420M90-10v320M250-10v320" />
+                <path d="M-10 40l420 150" stroke-width="6" />
+              </g>
+              <g fill="#bfe3dc">
+                <rect x="104" y="104" width="62" height="70" rx="8" />
+                <rect x="264" y="104" width="100" height="60" rx="8" />
+                <rect x="20" y="104" width="56" height="70" rx="8" />
+                <rect x="264" y="206" width="100" height="70" rx="8" />
+              </g>
+            </svg>
+            <span class="map-placeholder__pin" aria-hidden="true"><app-icon name="pin" [size]="44" /></span>
+            <div class="map-placeholder__panel glass">
+              <strong>{{ clinic.name }}</strong>
+              <span>{{ clinic.addressLine1 }}, {{ clinic.addressLine2 }}</span>
+              <div class="map-placeholder__actions">
+                <button type="button" class="btn btn--primary btn--sm" (click)="loadMap()">
+                  Load interactive map
+                </button>
+                <a class="btn btn--outline btn--sm" [href]="clinic.mapsUrl" target="_blank" rel="noopener">
+                  Open in Google Maps
+                  <app-icon name="arrow-up-right" [size]="14" />
+                </a>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</section>

@@ -15,6 +15,15 @@
           Calm, considered dentistry in Portland since {{ clinic.established }}. A small team,
           longer appointments and no pressure — ever.
         </p>
+        <ul class="footer-social" aria-label="Social media">
+          @for (link of social; track link.label) {
+            <li>
+              <a [href]="link.href" target="_blank" rel="noopener" [attr.aria-label]="link.label">
+                <app-icon [name]="link.icon" [size]="18" />
+              </a>
+            </li>
+          }
+        </ul>
         <div class="footer-rating">
           <span class="stars" aria-hidden="true">
             @for (star of [1, 2, 3, 4, 5]; track star) {
@@ -26,7 +35,7 @@
       </div>
 
       <div class="footer-column">
-        <h2 class="footer-heading">Explore</h2>
+        <h2 class="footer-heading">Quick links</h2>
         <ul class="footer-links">
           @for (item of explore; track item.fragment) {
             <li>
@@ -34,7 +43,6 @@
             </li>
           }
           <li><a routerLink="/book">Book an appointment</a></li>
-          <li><a routerLink="/signin">Patient sign in</a></li>
         </ul>
       </div>
 
@@ -88,7 +96,7 @@
       <p>© {{ year }} {{ clinic.name }}. All rights reserved.</p>
       <div class="footer-legal">
         <span>OR Board of Dentistry · Lic. #D-14872</span>
-        <a routerLink="/signin">Staff &amp; patient sign in</a>
+        <a routerLink="/reception">Staff portal</a>
       </div>
     </div>
   </div>
