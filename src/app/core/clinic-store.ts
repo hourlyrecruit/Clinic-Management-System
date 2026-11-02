@@ -504,7 +504,7 @@ function createSeedData(): PersistedClinic {
     startTime: '11:30',
     minOffset: 2,
     status: 'CANCELLED',
-    reason: 'Rescheduling after half-term.',
+    reason: 'Rescheduling after school holidays.',
     createdByRole: 'PATIENT',
     reference: 'LD-10529',
   });
@@ -535,8 +535,8 @@ function createSeedData(): PersistedClinic {
   const messages: ClinicMessage[] = [
     {
       id: 'msg-seed-1',
-      name: 'Nadia Flores',
-      contact: 'nadia.flores@example.com',
+      name: 'Neha Kulkarni',
+      contact: 'neha.kulkarni@example.com',
       topic: 'Clear aligners',
       message:
         'I am interested in clear aligners but had braces as a teenager and my bite has shifted back. Is a free consultation suitable for a second opinion?',
@@ -546,19 +546,19 @@ function createSeedData(): PersistedClinic {
     },
     {
       id: 'msg-seed-2',
-      name: 'Tom Whitaker',
-      contact: '(503) 555-0107',
+      name: 'Tarun Rao',
+      contact: '+91 98450 11007',
       topic: 'Insurance & pricing',
       message:
-        'I have Delta Dental PPO and need a crown replaced. Could someone confirm what is usually covered before I book?',
+        'I have a Star Health policy and need a crown replaced. Could someone confirm what is usually covered before I book?',
       source: 'chat',
       createdAt: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString(),
       status: 'open',
     },
     {
       id: 'msg-seed-3',
-      name: 'Harriet Moss',
-      contact: 'harriet.moss@example.com',
+      name: 'Hema Mathew',
+      contact: 'hema.mathew@example.com',
       topic: 'Nervous patients',
       message:
         'I have not been to a dentist in a very long time and I am quite anxious. Is there anything you can suggest before my first appointment?',

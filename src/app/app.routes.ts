@@ -5,7 +5,7 @@ import { DashboardShell } from './layout/dashboard-shell/dashboard-shell';
 export const routes: Routes = [
   {
     path: '',
-    title: 'Lumina Dental Studio — calm, considered dentistry in Portland',
+    title: 'Lumina Dental Studio — calm, considered dentistry in Bengaluru',
     loadComponent: () => import('./pages/home/home').then((module) => module.HomePage),
   },
   {

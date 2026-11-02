@@ -15,7 +15,7 @@ export class ClinicSection {
   protected readonly hours = HOURS;
   protected readonly amenities = [
     'Step-free access',
-    'Free on-site parking',
+    'Valet parking',
     'Ceiling screens',
     'Noise-cancelling headphones',
     'Early & evening slots',

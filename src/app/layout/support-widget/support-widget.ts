@@ -109,11 +109,11 @@ export class SupportWidget {
     const query = text.toLowerCase();
 
     if (query.includes('emergency') || query.includes('pain') || query.includes('urgent')) {
-      return `For severe pain, swelling or a broken tooth, please call our emergency line on ${CLINIC.emergencyPhoneDisplay} before 4:00 PM. We keep same-day slots open. If it is after hours, your insurer's nurse line or urgent care can help.`;
+      return `For severe pain, swelling or a broken tooth, please call our emergency line on ${CLINIC.emergencyPhoneDisplay} before 6:00 PM. We keep same-day slots open. If it is after hours, your insurer's nurse line or urgent care can help.`;
     }
 
     if (query.includes('hour') || query.includes('open') || query.includes('close')) {
-      return `We are open ${HOURS[0].day} ${HOURS[0].time}, ${HOURS[1].day} ${HOURS[1].time} and ${HOURS[2].day} ${HOURS[2].time}. Closed Sundays. We are at ${CLINIC.addressLine1}, ${CLINIC.addressLine2}.`;
+      return `We are open ${HOURS[0].day} ${HOURS[0].time} and ${HOURS[1].day} ${HOURS[1].time}. Closed Sundays. We are at ${CLINIC.addressLine1}, ${CLINIC.addressLine2}.`;
     }
 
     if (
@@ -123,7 +123,7 @@ export class SupportWidget {
       query.includes('cover') ||
       query.includes('pay')
     ) {
-      return `We are in-network with Delta Dental, Cigna, Aetna and MetLife and submit claims for most other plans. Send a photo of your insurance card here and a coordinator will confirm your cover before you book — no surprises.`;
+      return `We work with Star Health, HDFC ERGO, ICICI Lombard and Niva Bupa and submit claims for most other Indian insurers. Send a photo of your insurance card here and a coordinator will confirm your cover before you book — no surprises.`;
     }
 
     if (

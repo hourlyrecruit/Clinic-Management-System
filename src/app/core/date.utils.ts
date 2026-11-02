@@ -65,7 +65,7 @@ export function formatTime(time: string): string {
 
 /** e.g. "Thu, Oct 29" */
 export function formatDateShort(iso: string): string {
-  return fromIsoDate(iso).toLocaleDateString('en-US', {
+  return fromIsoDate(iso).toLocaleDateString('en-IN', {
     weekday: 'short',
     month: 'short',
     day: 'numeric',
@@ -74,7 +74,7 @@ export function formatDateShort(iso: string): string {
 
 /** e.g. "Thursday, October 29, 2026" */
 export function formatDateLong(iso: string): string {
-  return fromIsoDate(iso).toLocaleDateString('en-US', {
+  return fromIsoDate(iso).toLocaleDateString('en-IN', {
     weekday: 'long',
     month: 'long',
     day: 'numeric',
@@ -87,7 +87,7 @@ export function formatTimestamp(value: string): string {
   if (Number.isNaN(date.getTime())) {
     return value;
   }
-  return date.toLocaleString('en-US', {
+  return date.toLocaleString('en-IN', {
     month: 'short',
     day: 'numeric',
     hour: 'numeric',
@@ -138,15 +138,15 @@ export function isPastSlot(dateIso: string, time: string): boolean {
 export function dayParts(iso: string): { weekday: string; day: string; month: string } {
   const date = fromIsoDate(iso);
   return {
-    weekday: date.toLocaleDateString('en-US', { weekday: 'short' }),
+    weekday: date.toLocaleDateString('en-IN', { weekday: 'short' }),
     day: `${date.getDate()}`,
-    month: date.toLocaleDateString('en-US', { month: 'short' }),
+    month: date.toLocaleDateString('en-IN', { month: 'short' }),
   };
 }
 
 export function formatDayHeading(iso: string): string {
   const date = fromIsoDate(iso);
-  return date.toLocaleDateString('en-US', {
+  return date.toLocaleDateString('en-IN', {
     weekday: 'long',
     month: 'long',
     day: 'numeric',

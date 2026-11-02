@@ -3,16 +3,16 @@ import { Dentist, Faq, Service, Testimonial } from './models';
 export const CLINIC = {
   name: 'Lumina Dental Studio',
   shortName: 'Lumina',
-  tagline: 'Calm, considered dentistry in Portland.',
-  phoneDisplay: '(503) 555-0142',
-  phoneHref: 'tel:+15035550142',
-  emergencyPhoneDisplay: '(503) 555-0199',
-  emergencyPhoneHref: 'tel:+15035550199',
-  email: 'hello@luminadental.studio',
-  addressLine1: '2180 NW Quimby Street, Suite 120',
-  addressLine2: 'Portland, OR 97210',
+  tagline: 'Calm, considered dentistry in Bengaluru.',
+  phoneDisplay: '+91 80 4123 4567',
+  phoneHref: 'tel:+918041234567',
+  emergencyPhoneDisplay: '+91 98450 12345',
+  emergencyPhoneHref: 'tel:+919845012345',
+  email: 'hello@luminadental.in',
+  addressLine1: 'No. 12, 100 Feet Road, Indiranagar 2nd Stage',
+  addressLine2: 'Bengaluru, Karnataka 560038',
   mapsUrl:
-    'https://www.google.com/maps/search/?api=1&query=2180+NW+Quimby+Street+Portland+OR+97210',
+    'https://www.google.com/maps/search/?api=1&query=No.+12+100+Feet+Road+Indiranagar+2nd+Stage+Bengaluru+560038',
   rating: '4.9',
   reviewCount: 312,
   patientCount: '1,200+',
@@ -20,8 +20,7 @@ export const CLINIC = {
 } as const;
 
 export const HOURS = [
-  { day: 'Monday – Thursday', time: '8:00 AM – 6:00 PM' },
-  { day: 'Friday', time: '8:00 AM – 4:00 PM' },
+  { day: 'Monday – Friday', time: '9:00 AM – 6:30 PM' },
   { day: 'Saturday', time: '9:00 AM – 2:00 PM' },
   { day: 'Sunday', time: 'Closed' },
 ] as const;
@@ -36,7 +35,7 @@ export const SERVICES: readonly Service[] = [
     icon: 'shield',
     duration: '45 min',
     durationMinutes: 45,
-    fromPrice: '$95',
+    fromPrice: '₹1,500',
     highlights: ['Digital low-dose X-rays', 'Same-visit treatment plan'],
   },
   {
@@ -48,8 +47,8 @@ export const SERVICES: readonly Service[] = [
     icon: 'align',
     duration: '30 min scan',
     durationMinutes: 30,
-    fromPrice: '$2,900',
-    highlights: ['3D digital scan', '0% financing available'],
+    fromPrice: '₹1,80,000',
+    highlights: ['3D digital scan', '0% EMI available'],
     featured: true,
   },
   {
@@ -61,7 +60,7 @@ export const SERVICES: readonly Service[] = [
     icon: 'sparkles',
     duration: '60 min',
     durationMinutes: 60,
-    fromPrice: '$420',
+    fromPrice: '₹12,000',
     highlights: ['Sensitivity-safe formula', 'Custom take-home trays'],
   },
   {
@@ -73,7 +72,7 @@ export const SERVICES: readonly Service[] = [
     icon: 'tooth',
     duration: '2 visits',
     durationMinutes: 45,
-    fromPrice: '$850 / tooth',
+    fromPrice: '₹18,000 / tooth',
     highlights: ['Digital smile preview', 'Hand-layered porcelain'],
   },
   {
@@ -85,7 +84,7 @@ export const SERVICES: readonly Service[] = [
     icon: 'implant',
     duration: '3–6 months',
     durationMinutes: 60,
-    fromPrice: '$2,400',
+    fromPrice: '₹35,000',
     highlights: ['Guided 3D placement', 'Single-tooth or full-arch'],
   },
   {
@@ -97,7 +96,7 @@ export const SERVICES: readonly Service[] = [
     icon: 'smile',
     duration: '40 min',
     durationMinutes: 40,
-    fromPrice: '$75',
+    fromPrice: '₹1,200',
     highlights: ['Ages 2 and up', 'Built-in fun first'],
   },
 ] as const;
@@ -105,36 +104,36 @@ export const SERVICES: readonly Service[] = [
 export const DENTISTS: readonly Dentist[] = [
   {
     id: 'ada',
-    name: 'Dr. Ada Bennett',
+    name: 'Dr. Ananya Rao',
     role: 'Clinical Director · Restorative & Cosmetic',
     focus: ['Veneers', 'Implants', 'Nervous patients'],
-    bio: 'Ada founded Lumina in 2014 with one rule: never rush a patient. She lectures on minimally invasive cosmetic dentistry.',
+    bio: 'Ananya founded Lumina in 2014 with one rule: never rush a patient. She lectures on minimally invasive cosmetic dentistry across India.',
     image: 'images/dentist-ada.jpg',
     availability: 'Next opening: this week',
     years: 14,
-    email: 'ada@luminadental.studio',
+    email: 'ananya@luminadental.in',
   },
   {
     id: 'maya',
-    name: 'Dr. Maya Okafor',
+    name: 'Dr. Meera Iyer',
     role: 'Orthodontic Lead · Clear Aligners',
     focus: ['Invisalign®', 'Bite health', 'Teens'],
-    bio: 'Maya has guided more than 800 aligner cases. She is the person who will tell you honestly if clear aligners are the wrong choice.',
+    bio: 'Meera has guided more than 800 aligner cases. She is the person who will tell you honestly if clear aligners are the wrong choice.',
     image: 'images/dentist-maya.jpg',
     availability: 'Next opening: within 3 days',
     years: 11,
-    email: 'maya@luminadental.studio',
+    email: 'meera@luminadental.in',
   },
   {
     id: 'daniel',
-    name: 'Dr. Daniel Reyes',
+    name: 'Dr. Aditya Menon',
     role: 'Family & Preventive Dentist',
     focus: ['Hygiene', 'Children', 'Emergency care'],
-    bio: 'Daniel looks after entire families, from first teeth to full-arch care. He is known for a very steady hand and a very bad joke.',
+    bio: 'Aditya looks after entire families, from first teeth to full-arch care. He is known for a very steady hand and a very bad joke.',
     image: 'images/dentist-daniel.jpg',
     availability: 'Next opening: tomorrow',
     years: 9,
-    email: 'daniel@luminadental.studio',
+    email: 'aditya@luminadental.in',
   },
 ] as const;
 
@@ -142,19 +141,19 @@ export const TESTIMONIALS: readonly Testimonial[] = [
   {
     quote:
       'I had put off the dentist for six years. Nobody made me feel silly about it — they just made a plan, started small, and checked in as we went.',
-    name: 'Priya S.',
+    name: 'Shruti K.',
     treatment: 'Hygiene & clear aligners',
   },
   {
     quote:
-      'Our daughter was nervous and Daniel sat on the floor with her for ten minutes before he even picked up a mirror. She now asks when we are going back.',
-    name: 'Marcus L.',
+      'Our daughter was nervous and Dr. Aditya sat on the floor with her for ten minutes before he even picked up a mirror. She now asks when we are going back.',
+    name: 'Arjun M.',
     treatment: 'Family dentistry',
   },
   {
     quote:
       'First time I have ever left a dental appointment feeling calm. The space feels like a hotel, the team explains everything, and the veneers look like me.',
-    name: 'Elena R.',
+    name: 'Divya R.',
     treatment: 'Porcelain veneers',
   },
 ] as const;
@@ -163,7 +162,7 @@ export const FAQS: readonly Faq[] = [
   {
     question: 'Do you accept my dental insurance?',
     answer:
-      'We are in-network with Delta Dental, Cigna, Aetna and MetLife, and we submit claims for most other plans. Send a photo of your insurance card through the care chat and we will confirm your cover before your appointment.',
+      'We work with Star Health, HDFC ERGO, ICICI Lombard and Niva Bupa, and we submit claims for most other Indian insurers. Send a photo of your policy card through the care chat and we will confirm your cover before your appointment.',
   },
   {
     question: 'What happens at a first visit?',
@@ -173,7 +172,7 @@ export const FAQS: readonly Faq[] = [
   {
     question: 'Can I be seen for an emergency?',
     answer:
-      'Yes. We hold same-day slots for toothache, breakages and swelling. Call our emergency line on (503) 555-0199 before 4:00 PM and we will fit you in or advise on urgent care.',
+      'Yes. We hold same-day slots for toothache, breakages and swelling. Call our emergency line on +91 98450 12345 before 6:00 PM and we will fit you in or advise on urgent care.',
   },
   {
     question: 'Is treatment painful? What about anxious patients?',
@@ -188,7 +187,7 @@ export const FAQS: readonly Faq[] = [
   {
     question: 'What is your cancellation policy?',
     answer:
-      'We ask for 24 hours notice so the slot can go to another patient. Late cancellations and no-shows may incur a $50 fee, which we waive in genuine emergencies.',
+      'We ask for 24 hours notice so the slot can go to another patient. Late cancellations and no-shows may incur a ₹500 fee, which we waive in genuine emergencies.',
   },
 ] as const;
 
