@@ -1,0 +1,289 @@
+# Task: Recreate the Dental Services Cards Design Exactly
+
+Act as a senior Angular developer, UI/UX designer, and frontend animation specialist.
+
+I have provided a reference image of a dental clinic services section. Your task is to **recreate the design as closely as possible using real Angular HTML, CSS, TypeScript, images, and animations**.
+
+The reference image is the source of truth. Do not create a new design, simplify the layout, change the color palette, or introduce your own visual style.
+
+## 1. First Inspect the Existing Project
+
+Before writing any code:
+
+1. Inspect the existing Angular project structure.
+2. Identify the Angular version and whether the project uses standalone components.
+3. Identify the current styling approach, such as plain CSS, SCSS, or Tailwind CSS.
+4. Check the existing icon library and installed dependencies.
+5. Locate the current services section and identify which files need modification.
+6. Preserve the existing project architecture and avoid unnecessary dependencies.
+
+Do not replace the entire application or modify unrelated pages.
+
+## 2. Match the Reference Image
+
+Reproduce the reference image's overall appearance, proportions, spacing, and visual hierarchy.
+
+### Page Layout
+- Use a pale blue-gray background with a subtle gradient.
+- Center the services grid within a large content container.
+- Use three columns and two rows on desktop.
+- Keep all six cards aligned with consistent spacing.
+- Match the reference image's card widths, heights, padding, border radii, and gaps as closely as possible.
+- Use a responsive layout for tablets and mobile devices without changing the desktop design unnecessarily.
+
+### Service Cards
+
+Create six cards in this exact order:
+
+1. Check-ups & hygiene
+2. Clear aligners
+3. Teeth whitening
+4. Porcelain veneers
+5. Dental implants
+6. Children's dentistry
+
+Each card must contain:
+- A small rounded-square icon badge in the upper-left corner.
+- A small pill-shaped "MOST REQUESTED" badge in the upper-right corner, matching the reference.
+- A prominent service title using an elegant serif font.
+- A short description using a clean sans-serif font.
+- Two benefit rows with small checkmark icons.
+- A thin horizontal divider.
+- An appointment duration and starting price at the bottom-left.
+- A circular arrow button at the bottom-right.
+
+Use the exact text below where it is legible in the reference. Keep the content structure and line lengths visually similar.
+
+### Card 1: Check-ups & hygiene
+Description: Gentle cleanings, digital imaging and prevention that actually fits your life.
+
+Benefits:
+- Digital low-dose X-rays
+- Same-visit treatment plan
+
+Footer: 45 min · from $95
+
+### Card 2: Clear aligners
+Description: Invisalign® treatment planned by our orthodontic lead, without the metal.
+
+Benefits:
+- 3D digital scan
+- 0% financing available
+
+Footer: 30 min scan · from $2,900
+
+Make this the featured card with a dark teal gradient, cyan outline, subtle glow, and white text.
+
+### Card 3: Teeth whitening
+Description: A brighter smile in one visit, with results you can maintain at home.
+
+Benefits:
+- Sensitivity-safe formula
+- Custom take-home trays
+
+Footer: 60 min · from $420
+
+### Card 4: Porcelain veneers
+Description: Hand-layered porcelain designed around your face, not a template.
+
+Benefits:
+- Digital smile preview
+- Hand-layered porcelain
+
+Footer: 2 visits · from $850 / tooth
+
+### Card 5: Dental implants
+Description: Replace a missing tooth with something that feels like your own.
+
+Benefits:
+- Guided 3D placement
+- Single-tooth or full-arch
+
+Footer: 3–6 months · from $2,400
+
+### Card 6: Children's dentistry
+Description: First visits and check-ups paced for small humans and big feelings.
+
+Benefits:
+- Ages 2 and up
+- Built-in fun first
+
+Footer: 40 min · from $75
+
+Treat prices, durations, and clinical or financing claims as demo content until approved by the clinic.
+
+## 3. Images and Visual Assets
+
+Use high-quality, relevant dental photography for every card.
+
+- Check-ups: dentist examining a smiling adult patient.
+- Clear aligners: smiling adult holding or wearing a transparent aligner.
+- Whitening: close-up of a bright smile and dental whitening shade guide.
+- Veneers: close-up of a dental professional demonstrating a veneer.
+- Implants: a realistic dental implant illustration or clinical implant image.
+- Children's dentistry: a friendly dentist examining a smiling child.
+
+Image requirements:
+- Use appropriately licensed images.
+- Maintain consistent image dimensions and cropping.
+- Use `object-fit: cover`.
+- Avoid distorted, stretched, pixelated, or unrelated images.
+- Match the reference image's soft lighting and cool, professional color grading.
+- Do not use the entire reference screenshot as the background.
+- Build each card as a real, independent UI component.
+
+If the project has no image assets, identify suitable assets and explain where they should be placed. Do not leave broken image URLs or pretend placeholder gradients are real photographs.
+
+## 4. Exact Color and Styling Direction
+
+Use these approximate colors as a starting point and refine them by comparing the rendered result with the reference image:
+
+- Main background: `#EAF2F5`
+- Card background: `#F8FAFB`
+- Primary dark teal: `#075C63`
+- Featured card gradient: `#08777C` to `#003F47`
+- Accent cyan: `#35D0D5`
+- Main heading: `#102F38`
+- Body text: `#627D87`
+- Divider: `#D5E3E8`
+- Icon badge background: pale aqua with a subtle border
+
+Typography:
+- Use an elegant serif font for service headings.
+- Use a readable sans-serif font for descriptions, benefits, and footer details.
+- Keep font sizes, weights, line heights, and wrapping close to the reference.
+- Avoid oversized headings that change the card proportions.
+
+Cards:
+- Rounded corners of approximately 22–26px.
+- Thin, subtle borders.
+- Soft ambient shadows.
+- Carefully aligned content.
+- Consistent bottom-row positioning.
+- No unnecessary visual clutter.
+
+## 5. Animations and Interactive Effects
+
+Implement polished animations without changing the reference design.
+
+### Card Hover
+- Move the card upward approximately 4–6px.
+- Increase the shadow slightly.
+- Transition smoothly over approximately 250–350ms.
+- Keep the card's original size and layout stable.
+
+### Image Hover
+- Slowly zoom the image to approximately `scale(1.04)`.
+- Clip the image within its rounded container.
+- Do not let the image overlap text or other cards.
+
+### Featured Card
+- Add a very subtle cyan glow.
+- Animate the glow slowly and unobtrusively.
+- Give the featured badge a gentle floating effect.
+- Keep text contrast high.
+
+### Arrow Button
+- Move the arrow slightly upward and to the right on hover.
+- Add a subtle background-color transition.
+- Provide visible keyboard focus styling.
+
+### Scroll Reveal
+- Reveal cards with a slight fade-up effect when they enter the viewport.
+- Use a small stagger between cards.
+- Avoid replaying the animation excessively during scrolling.
+
+Use CSS transitions and keyframes for most effects. Use Angular lifecycle hooks and Intersection Observer only where needed.
+
+Respect `prefers-reduced-motion` and keep animations smooth on lower-powered devices.
+
+## 6. Angular Component Architecture
+
+Use a reusable, data-driven service-card component rather than duplicating six separate implementations.
+
+Suggested structure:
+
+`src/app/features/services/`
+- `services-section.component.ts`
+- `services-section.component.html`
+- `services-section.component.css`
+- `service-card/`
+  - `service-card.component.ts`
+  - `service-card.component.html`
+  - `service-card.component.css`
+
+Adapt this structure to the existing project instead of forcing a new architecture.
+
+Store service details in a typed TypeScript array or model. Render the cards using Angular's appropriate template iteration syntax for the installed Angular version.
+
+Keep component logic separate from presentation.
+
+## 7. Functional Requirements
+
+- Every arrow button must perform a meaningful action.
+- Clicking a card or arrow should navigate to the relevant service detail page or open a service details panel, depending on the existing application architecture.
+- Do not leave dead buttons.
+- Do not make the entire card clickable if that would interfere with other interactive controls.
+- Provide accessible labels for icon-only buttons.
+- Ensure keyboard navigation and visible focus states.
+- Use semantic HTML and appropriate image alt text.
+
+If service detail pages do not exist, implement a simple, consistent service-details interaction without introducing unnecessary features.
+
+## 8. Responsive Design
+
+Desktop:
+- Three columns.
+- Two rows.
+- Match the reference image's overall proportions.
+
+Tablet:
+- Two columns.
+- Preserve consistent card styling and spacing.
+
+Mobile:
+- One column.
+- Reduce card and image dimensions appropriately.
+- Keep headings, benefits, and footer details readable.
+- Prevent horizontal scrolling.
+- Ensure arrow buttons remain easy to tap.
+- Avoid animations that make the page feel slow.
+
+Test at widths of 320px, 375px, 768px, 1024px, 1440px, and 1920px.
+
+## 9. Implementation and Visual Verification
+
+Do not stop after generating the initial code.
+
+1. Implement the service section.
+2. Run the Angular application.
+3. Fix compilation errors and browser-console errors.
+4. Open the rendered page at a desktop viewport.
+5. Compare it side by side with the provided reference image.
+6. Adjust spacing, card dimensions, typography, colors, image crops, shadows, and alignment.
+7. Test the hover and scroll animations.
+8. Test tablet and mobile layouts.
+9. Verify all six cards and their interactive elements.
+10. Summarize the files changed and the tests performed.
+
+If browser or screenshot tools are available, use them for visual verification. Do not claim that a visual comparison was performed if the page was not actually rendered.
+
+## 10. Strict Constraints
+
+- Angular frontend only.
+- No backend implementation.
+- No database integration.
+- No payment gateway.
+- No unrelated modules or redesigns.
+- No replacement of the existing project.
+- No unnecessary libraries.
+- No screenshot used as a flat page background.
+- No fake functionality or broken image assets.
+
+## Final Acceptance Criteria
+
+The finished result must closely resemble the provided reference image in layout, color palette, card proportions, typography, photography, spacing, and visual hierarchy.
+
+The design should feel premium, clean, responsive, and professionally implemented. Prioritize visual fidelity over adding new features.
+
+Begin by inspecting the existing project and identifying the exact files that need to change. Then implement and verify the service section.

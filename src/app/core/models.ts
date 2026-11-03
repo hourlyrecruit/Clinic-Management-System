@@ -47,6 +47,8 @@ export interface Service {
   readonly durationMinutes: number;
   readonly fromPrice: string;
   readonly highlights: readonly string[];
+  readonly image: string;
+  readonly imageAlt: string;
   readonly featured?: boolean;
 }
 

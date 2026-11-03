@@ -21,48 +21,63 @@
 
     <div class="services__grid">
       @for (service of services; track service.id; let index = $index) {
-        <article
-          class="service-card"
-          [class.service-card--featured]="service.featured"
-          appReveal
-          [revealDelay]="index * 70"
-        >
-          <div class="service-card__top">
-            <span class="service-card__icon">
-              <app-icon [name]="service.icon" [size]="22" />
-            </span>
-            @if (service.featured) {
-              <span class="service-card__flag">Most requested</span>
-            }
-          </div>
+        <div class="services__cell" appReveal [revealDelay]="index * 70">
+          <article
+            class="service-card"
+            [class.service-card--featured]="service.featured"
+            (pointermove)="tilt($event)"
+            (pointerleave)="resetTilt($event)"
+          >
+            <figure class="service-card__media">
+              <img
+                [src]="service.image"
+                [alt]="service.imageAlt"
+                width="1100"
+                height="740"
+                loading="lazy"
+                decoding="async"
+              />
+            </figure>
 
-          <h3>{{ service.name }}</h3>
-          <p>{{ service.summary }}</p>
+            <span class="service-card__sparkles" aria-hidden="true"></span>
 
-          <ul class="service-card__points">
-            @for (point of service.highlights; track point) {
-              <li>
-                <app-icon name="check" [size]="13" />
-                {{ point }}
-              </li>
-            }
-          </ul>
+            <div class="service-card__content">
+              <div class="service-card__top">
+                <span class="service-card__icon">
+                  <app-icon [name]="service.icon" [size]="22" />
+                </span>
+                <span class="service-card__flag">Most requested</span>
+              </div>
 
-          <div class="service-card__foot">
-            <span class="service-card__meta">
-              <app-icon name="clock" [size]="14" />
-              {{ service.duration }} · from {{ service.fromPrice }}
-            </span>
-            <a
-              class="service-card__cta"
-              routerLink="/book"
-              [queryParams]="{ service: service.id }"
-              [attr.aria-label]="'Book ' + service.name"
-            >
-              <app-icon name="arrow-up-right" [size]="16" />
-            </a>
-          </div>
-        </article>
+              <h3>{{ service.name }}</h3>
+              <p class="service-card__summary">{{ service.summary }}</p>
+
+              <ul class="service-card__points">
+                @for (point of service.highlights; track point) {
+                  <li>
+                    <app-icon name="check" [size]="13" />
+                    {{ point }}
+                  </li>
+                }
+              </ul>
+
+              <div class="service-card__foot">
+                <span class="service-card__meta">
+                  <app-icon name="clock" [size]="14" />
+                  {{ service.duration }} · from {{ service.fromPrice }}
+                </span>
+                <a
+                  class="service-card__cta"
+                  routerLink="/book"
+                  [queryParams]="{ service: service.id }"
+                  [attr.aria-label]="'Book ' + service.name"
+                >
+                  <app-icon name="arrow-up-right" [size]="16" />
+                </a>
+              </div>
+            </div>
+          </article>
+        </div>
       }
     </div>
 

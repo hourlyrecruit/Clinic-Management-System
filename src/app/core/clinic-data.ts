@@ -37,6 +37,8 @@ export const SERVICES: readonly Service[] = [
     durationMinutes: 45,
     fromPrice: '₹1,500',
     highlights: ['Digital low-dose X-rays', 'Same-visit treatment plan'],
+    image: 'images/services/checkup.jpg',
+    imageAlt: 'Dentist and smiling patient during a routine dental check-up',
   },
   {
     id: 'aligners',
@@ -49,6 +51,8 @@ export const SERVICES: readonly Service[] = [
     durationMinutes: 30,
     fromPrice: '₹1,80,000',
     highlights: ['3D digital scan', '0% EMI available'],
+    image: 'images/services/aligners.jpg',
+    imageAlt: 'Clear dental aligners held in a patient’s hands',
     featured: true,
   },
   {
@@ -62,6 +66,8 @@ export const SERVICES: readonly Service[] = [
     durationMinutes: 60,
     fromPrice: '₹12,000',
     highlights: ['Sensitivity-safe formula', 'Custom take-home trays'],
+    image: 'images/services/whitening-smile.jpg',
+    imageAlt: 'Close-up of a bright, healthy smile after whitening',
   },
   {
     id: 'veneers',
@@ -74,6 +80,8 @@ export const SERVICES: readonly Service[] = [
     durationMinutes: 45,
     fromPrice: '₹18,000 / tooth',
     highlights: ['Digital smile preview', 'Hand-layered porcelain'],
+    image: 'images/services/veneers.jpg',
+    imageAlt: 'Hand-layered porcelain veneer samples on a shade guide',
   },
   {
     id: 'implants',
@@ -86,6 +94,8 @@ export const SERVICES: readonly Service[] = [
     durationMinutes: 60,
     fromPrice: '₹35,000',
     highlights: ['Guided 3D placement', 'Single-tooth or full-arch'],
+    image: 'images/services/implants.jpg',
+    imageAlt: 'Dental implant model showing the titanium screw and replacement tooth',
   },
   {
     id: 'children',
@@ -98,6 +108,8 @@ export const SERVICES: readonly Service[] = [
     durationMinutes: 40,
     fromPrice: '₹1,200',
     highlights: ['Ages 2 and up', 'Built-in fun first'],
+    image: 'images/services/children.jpg',
+    imageAlt: 'A young child smiling during a friendly dental check-up',
   },
 ] as const;
 
