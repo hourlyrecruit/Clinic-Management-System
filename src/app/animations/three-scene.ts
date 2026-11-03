@@ -39,6 +39,7 @@ import type {
   DirectionalLight,
   AmbientLight,
   HemisphereLight,
+  Material,
 } from 'three';
 
 /* ------------------------------------------------------------------ */
@@ -105,62 +106,7 @@ interface Shockwave {
   active: boolean;
 }
 
-interface ThreeModule {
-  Scene: typeof Scene;
-  PerspectiveCamera: typeof PerspectiveCamera;
-  WebGLRenderer: typeof WebGLRenderer;
-  InstancedMesh: typeof InstancedMesh;
-  Mesh: typeof Mesh;
-  Points: typeof Points;
-  Sprite: typeof Sprite;
-  PointLight: typeof PointLight;
-  Object3D: typeof Object3D;
-  BufferGeometry: typeof BufferGeometry;
-  MeshPhysicalMaterial: typeof MeshPhysicalMaterial;
-  MeshBasicMaterial: typeof MeshBasicMaterial;
-  SpriteMaterial: typeof SpriteMaterial;
-  PointsMaterial: typeof PointsMaterial;
-  LineSegments: typeof LineSegments;
-  LineBasicMaterial: typeof LineBasicMaterial;
-  DataTexture: typeof DataTexture;
-  CanvasTexture: typeof Texture;
-  PMREMGenerator: typeof PMREMGeneratorType;
-  Raycaster: typeof Raycaster;
-  Plane: typeof Plane;
-  Vector2: typeof Vector2;
-  Vector3: typeof Vector3;
-  Matrix4: typeof Matrix4;
-  Euler: typeof Euler;
-  Color: typeof Color;
-  Float32BufferAttribute: typeof Float32BufferAttribute;
-  RingGeometry: typeof RingGeometry;
-  CircleGeometry: typeof CircleGeometry;
-  CylinderGeometry: typeof CylinderGeometry;
-  BoxGeometry: typeof BoxGeometry;
-  LatheGeometry: typeof LatheGeometry;
-  PlaneGeometry: typeof PlaneGeometry;
-  SphereGeometry: typeof SphereGeometry;
-  EdgesGeometry: typeof EdgesGeometry;
-  DirectionalLight: typeof DirectionalLight;
-  AmbientLight: typeof AmbientLight;
-  HemisphereLight: typeof HemisphereLight;
-  FogExp2: typeof FogExp2;
-  MathUtils: { lerp: (a: number, b: number, t: number) => number; clamp: (v: number, min: number, max: number) => number; randFloat: (min: number, max: number) => number; randFloatSpread: (range: number) => number };
-  ACESFilmicToneMapping: number;
-  SRGBColorSpace: string;
-  RGBAFormat: number;
-  UnsignedByteType: number;
-  DynamicDrawUsage: number;
-  AdditiveBlending: number;
-  DoubleSide: number;
-  FrontSide: number;
-  BackSide: number;
-  NearestFilter: number;
-  LinearFilter: number;
-  RepeatWrapping: number;
-  ClampToEdgeWrapping: number;
-  [key: string]: unknown;
-}
+type ThreeModule = typeof import('three');
 
 /* ------------------------------------------------------------------ */
 /*  Constants                                                          */
@@ -397,7 +343,7 @@ function createGradientTexture(T: ThreeModule): DataTexture {
     data[idx + 3] = 255;
   }
 
-  const tex = new T.DataTexture(data, 1, height, T.RGBAFormat as number, T.UnsignedByteType as number);
+  const tex = new T.DataTexture(data, 1, height, T.RGBAFormat, T.UnsignedByteType);
   tex.needsUpdate = true;
   return tex;
 }
@@ -504,9 +450,9 @@ function createEnvironmentMap(T: ThreeModule, renderer: WebGLRenderer): Texture 
     if (m.geometry) m.geometry.dispose();
     if (m.material) {
       if (Array.isArray(m.material)) {
-        m.material.forEach((mat: MeshBasicMaterial) => mat.dispose());
+        m.material.forEach((mat) => mat.dispose());
       } else {
-        (m.material as MeshBasicMaterial).dispose();
+        m.material.dispose();
       }
     }
   });
@@ -523,7 +469,7 @@ export async function initScene(
   container: HTMLElement,
 ): Promise<SceneController> {
   // Dynamic import – single await for the whole library
-  const T = (await import('three')) as unknown as ThreeModule;
+  const T = (await import('three')) as ThreeModule;
 
   /* ------ state --------------------------------------------------- */
   let energy = 0;
@@ -550,7 +496,7 @@ export async function initScene(
     alpha: false,
     powerPreference: 'high-performance',
   });
-  renderer.toneMapping = T.ACESFilmicToneMapping as number;
+  renderer.toneMapping = T.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.1;
 
   const maxRatio = Math.min(window.devicePixelRatio, PIXEL_RATIO_CAP);
@@ -560,12 +506,12 @@ export async function initScene(
   /* ------ scene --------------------------------------------------- */
   const scene = new T.Scene();
   const bgTex = createGradientTexture(T);
-  (scene as Record<string, unknown>)['background'] = bgTex;
+  scene.background = bgTex;
   scene.fog = new T.FogExp2(0x031a20, 0.012) as FogExp2;
 
   /* ------ environment --------------------------------------------- */
   const envMap = createEnvironmentMap(T, renderer);
-  (scene as Record<string, unknown>)['environment'] = envMap;
+  scene.environment = envMap;
 
   /* ------ camera -------------------------------------------------- */
   const aspect = container.clientWidth / container.clientHeight;
@@ -619,7 +565,7 @@ export async function initScene(
   for (let typeIdx = 0; typeIdx < 4; typeIdx++) {
     const count = typeCounts[typeIdx];
     const instMesh = new T.InstancedMesh(geometries[typeIdx], swarmMat, count);
-    instMesh.instanceMatrix.setUsage(T.DynamicDrawUsage as number);
+    instMesh.instanceMatrix.setUsage(T.DynamicDrawUsage);
     instMesh.frustumCulled = false;
 
     const dataArr: InstanceData[] = [];
@@ -679,7 +625,7 @@ export async function initScene(
     color: 0x00e5ff,
     transparent: true,
     opacity: 0.35,
-    side: T.DoubleSide as number,
+    side: T.DoubleSide,
     depthWrite: false,
   });
   const cyanRing = new T.Mesh(ringGeo, ringMat) as Mesh;
@@ -688,7 +634,7 @@ export async function initScene(
 
   /* ------ lens flare sprites -------------------------------------- */
   const flareCanvas = createFlareTexture();
-  const flareTex = new (T as Record<string, unknown>)['CanvasTexture'](flareCanvas) as Texture;
+  const flareTex = new T.CanvasTexture(flareCanvas) as Texture;
   const flares: Sprite[] = [];
   const flareParentIndices: { typeIdx: number; instanceIdx: number }[] = [];
 
@@ -697,7 +643,7 @@ export async function initScene(
       map: flareTex,
       transparent: true,
       opacity: 0,
-      blending: T.AdditiveBlending as number,
+      blending: T.AdditiveBlending,
       depthWrite: false,
     });
     const sprite = new T.Sprite(spriteMat) as Sprite;
@@ -723,14 +669,14 @@ export async function initScene(
 
   for (let i = 0; i < SCAN_TILE_COUNT; i++) {
     const { canvas: glitchCanvas, ctx: glitchCtx } = createGlitchCanvas();
-    const glitchTex = new (T as Record<string, unknown>)['CanvasTexture'](glitchCanvas) as Texture;
+    const glitchTex = new T.CanvasTexture(glitchCanvas) as Texture;
     glitchTex.needsUpdate = true;
 
     const planeMat = new T.MeshBasicMaterial({
       map: glitchTex,
       transparent: true,
       opacity: 0.55,
-      side: T.DoubleSide as number,
+      side: T.DoubleSide,
       depthWrite: false,
     });
     const planeGeo = new T.PlaneGeometry(0.8, 0.6);
@@ -786,7 +732,7 @@ export async function initScene(
   }
 
   const sparkleCanvas = createSparkleTexture();
-  const sparkleTex = new (T as Record<string, unknown>)['CanvasTexture'](sparkleCanvas) as Texture;
+  const sparkleTex = new T.CanvasTexture(sparkleCanvas) as Texture;
 
   const particleGeo = new T.BufferGeometry();
   particleGeo.setAttribute('position', new T.Float32BufferAttribute(particlePositions, 3));
@@ -798,7 +744,7 @@ export async function initScene(
     map: sparkleTex,
     transparent: true,
     vertexColors: true,
-    blending: T.AdditiveBlending as number,
+    blending: T.AdditiveBlending,
     depthWrite: false,
     sizeAttenuation: true,
   });
@@ -872,7 +818,7 @@ export async function initScene(
       color: 0x00e5ff,
       transparent: true,
       opacity: 0.8,
-      side: T.DoubleSide as number,
+      side: T.DoubleSide,
       depthWrite: false,
     });
     const swMesh = new T.Mesh(swGeo, swMat) as Mesh;
@@ -1234,10 +1180,10 @@ export async function initScene(
         if (m.material) {
           if (Array.isArray(m.material)) {
             for (const mat of m.material) {
-              disposeMaterial(mat as MeshBasicMaterial);
+              disposeMaterial(mat);
             }
           } else {
-            disposeMaterial(m.material as MeshBasicMaterial);
+            disposeMaterial(m.material);
           }
         }
       });
@@ -1250,9 +1196,10 @@ export async function initScene(
     },
   };
 
-  function disposeMaterial(mat: MeshBasicMaterial & { map?: Texture | null; envMap?: Texture | null }): void {
-    if (mat.map) mat.map.dispose();
-    if (mat.envMap) mat.envMap.dispose();
+  function disposeMaterial(mat: Material): void {
+    const withMaps = mat as { map?: Texture | null; envMap?: Texture | null };
+    if (withMaps.map) withMaps.map.dispose();
+    if (withMaps.envMap) withMaps.envMap.dispose();
     mat.dispose();
   }
 

@@ -1,0 +1,116 @@
+<section class="ahero" aria-labelledby="ahero-title" #heroContainer>
+  <!-- Three.js canvas (decorative) -->
+  <canvas #heroCanvas class="ahero__canvas" aria-hidden="true"></canvas>
+
+  <!-- CSS/SVG fallback when WebGL is unavailable -->
+  @if (!webglSupported()) {
+    <div class="ahero__fallback" aria-hidden="true">
+      <svg class="ahero__fallback-tooth" viewBox="0 0 120 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path
+          d="M60 10 C30 10 15 40 15 65 C15 85 25 95 35 120 C40 135 45 150 50 150 C55 150 55 135 60 120 C65 135 65 150 70 150 C75 150 80 135 85 120 C95 95 105 85 105 65 C105 40 90 10 60 10Z"
+          stroke="rgba(0,229,255,0.3)"
+          stroke-width="1.5"
+        />
+        <path
+          d="M35 52 C45 48 75 48 85 52"
+          stroke="rgba(0,229,255,0.15)"
+          stroke-width="1"
+        />
+      </svg>
+    </div>
+  }
+
+  <!-- Left dark shade for headline readability -->
+  <div class="ahero__shade" aria-hidden="true"></div>
+
+  <!-- HUD overlay -->
+  <div class="ahero__hud" aria-hidden="true">
+    <div class="ahero__hud-tl">
+      <span class="ahero__hud-dot"></span>
+      LUMINA · DENTAL SCAN 01
+    </div>
+    <div class="ahero__hud-tr">ENAMEL 98.4% · SCAN ACTIVE</div>
+    <div class="ahero__hud-bottom">LUMINA DENTAL STUDIO · LIVE ENVIRONMENT · 2024</div>
+    <div class="ahero__hud-scanline"></div>
+    <div class="ahero__hud-vline"></div>
+  </div>
+
+  <!-- Hero content -->
+  <div class="container ahero__content">
+    <div class="ahero__copy">
+      <h1 id="ahero-title" class="ahero__title">
+        @for (word of headlineWords; track $index) {
+          <span
+            class="ahero__word"
+            [class.ahero__word--visible]="$index < wordsRevealed()"
+            [style.transition-delay]="($index * 0.08) + 's'"
+          >{{ word }}&nbsp;</span>
+        }
+      </h1>
+
+      <p class="ahero__subtitle">
+        Experience advanced dental care with expert doctors and modern technology.
+      </p>
+
+      <div class="ahero__actions">
+        <a class="btn btn--primary ahero__btn" routerLink="/book">
+          Book an Appointment
+          <app-icon name="arrow-right" [size]="17" />
+        </a>
+        <a class="btn btn--outline ahero__btn ahero__btn--outline" routerLink="/" fragment="services">
+          Explore Our Services
+        </a>
+      </div>
+
+      <button
+        class="ahero__consult-link"
+        type="button"
+        (click)="requestConsultation.emit()"
+      >
+        Request a free consultation →
+      </button>
+
+      <div class="ahero__rating">
+        <span class="ahero__stars">
+          @for (star of [1, 2, 3, 4, 5]; track star) {
+            <app-icon name="star" [size]="13" />
+          }
+        </span>
+        <strong>{{ clinic.rating }}</strong>
+        <span class="ahero__rating-text">
+          · {{ clinic.reviewCount }} reviews · {{ clinic.patientCount }} patients
+        </span>
+      </div>
+    </div>
+
+    <!-- Glass floating cards -->
+    <div class="ahero__cards">
+      <div class="ahero__card ahero__card--appointment">
+        <div class="ahero__card-icon">
+          <app-icon name="calendar" [size]="18" />
+        </div>
+        <div>
+          <span class="ahero__card-label">Next Available</span>
+          <strong>{{ nextOpening().day }} · {{ nextOpening().time }}</strong>
+        </div>
+        <span class="ahero__card-live"></span>
+      </div>
+
+      <div class="ahero__card ahero__card--dentist">
+        <img
+          [src]="dentists[0].image"
+          alt=""
+          width="40"
+          height="40"
+          loading="lazy"
+        />
+        <div>
+          <strong>{{ dentists[0].name }}</strong>
+          <span>Lead Dentist · Clinical Director</span>
+        </div>
+        <span class="ahero__card-badge">Available</span>
+      </div>
+    </div>
+  </div>
+</section>
+
